@@ -3,6 +3,11 @@
 Sistema de gestão que conecta a população de uma área à sua associação de moradores, facilitando os registros e encaminhamentos de problemas aos responsáveis de forma mais ágil e priorizada. 
 Um projeto desenvolvido na disciplina DPW.
 
+## Equipe:
+
+Larissa Cavalcante
+Marcos Gomes
+
 ## Como rodar
 
 ### Linux / macOS
