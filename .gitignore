@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+coverage/
+
+# Banco local (a partir do M04)
+
+# Logs
+*.log
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

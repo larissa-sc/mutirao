@@ -1,0 +1,9 @@
+{
+  "name": "mutirao",
+  "private": true,
+  "workspaces": ["backend", "frontend", "pacotes/*"],
+  "scripts": {
+    "dev:api": "npm run -w backend start:dev",
+    "dev:web": "npm run -w frontend dev"
+  }
+}
