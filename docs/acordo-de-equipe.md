@@ -8,8 +8,8 @@
 
 | Área | Responsável principal | Apoio |
 | --- | --- | --- |
-| Backend (NestJS, banco, autenticação) | Larissa ⚠️ | Marcos |
-| Frontend (React, telas, usabilidade) | Marcos ⚠️ | Larissa |
+| Backend (NestJS, banco, validação do login Firebase) | Marcos ⚠️ | Larissa |
+| Frontend (React, telas, login Firebase, usabilidade) | Larissa ⚠️ | Marcos |
 | Documentação (ata, backlog, contrato, domínio) | Larissa e Marcos, dividido por documento | |
 | Contato e reuniões com a Associação | Larissa e Marcos, ambos presentes | |
 | Testes com moradores e Associação | Marcos (condução) ⚠️ | Larissa (anotações) |

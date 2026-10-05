@@ -65,7 +65,7 @@ O que **não** faremos nesta versão, e por quê:
 |---|---|
 | Prazo | Semana 18 |
 | Equipe | 2 pessoas, 10h/semana no total |
-| Técnica | TypeScript (NestJS + React), PostgreSQL, PaaS gratuita |
+| Técnica | TypeScript (NestJS + React), login com Firebase Auth (e-mail e Google), banco a definir (ex.: Supabase/PostgreSQL), PaaS gratuita |
 | Contexto de uso | Aplicação web acessível por computador ou smartphone com conexão à internet |
 | Orçamento | R$ 0 durante o desenvolvimento, utilizando serviços gratuitos |
 | Público | Moradores da comunidade e membros da Associação |

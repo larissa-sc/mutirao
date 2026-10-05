@@ -17,7 +17,7 @@ Complementa os critérios de sucesso do [MVP](MVP.md#3---critérios-de-sucesso).
 
 | Tarefa | Descrição |
 | --- | --- |
-| T1 | Criar conta e fazer login |
+| T1 | Criar conta com e-mail ou entrar com Google |
 | T2 | Fazer um pedido: **1 de material** (ex.: semente) e **1 de serviço de máquina** (ex.: patrol, com local) |
 | T3 | Consultar os próprios pedidos e dizer o status de um deles |
 

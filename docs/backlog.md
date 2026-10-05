@@ -2,7 +2,7 @@
 
 | ID | História de usuário | Prioridade |
 | --- | --- | --- |
-| US01 | Como **morador/agricultor**, quero criar uma conta e fazer login para acessar o Mutirão. | Must |
+| US01 | Como **morador/agricultor**, quero criar uma conta com e-mail e senha ou entrar com Google para acessar o Mutirão. | Must |
 | US02 | Como **morador/agricultor**, quero fazer um pedido de material (sementes, adubo, ferramentas), de serviço de máquina (trator, patrol) ou de declaração (morador, convivência), informando o que preciso, para solicitá-lo à Associação. | Must |
 | US03 | Como **morador/agricultor**, quero consultar meus pedidos e seus status, e cancelar um pedido que não preciso mais, para acompanhar o que solicitei. | Must |
 | US04 | Como **membro da Associação**, quero visualizar e organizar os pedidos dos moradores para saber o que está pendente. | Must |
@@ -10,16 +10,21 @@
 
 ## Plano de trabalho
 
-Capacidade da equipe: **10 h/semana no total** (2 pessoas). Estimativas em horas, incluindo backend, frontend e testes da história. Os responsáveis são uma proposta inicial (ver [acordo de equipe](acordo-de-equipe.md)); a pessoa de apoio revisa o código.
+Capacidade da equipe: **10 h/semana no total** (2 pessoas). Cada história se divide em duas partes que podem andar em paralelo, usando o [contrato da API](contrato-api.md) como combinado:
 
-| Ordem | ID | Responsável | Apoio (revisão) | Estimativa | Depende de | Semana prevista |
-| :---: | --- | --- | --- | :---: | --- | :---: |
-| 1 | US01 | Larissa | Marcos | 8 h | — | 15 |
-| 2 | US02 | Marcos | Larissa | 12 h | US01 | 15–16 |
-| 3 | US03 | Marcos | Larissa | 6 h | US01, US02 | 16 |
-| 4 | US04 | Larissa | Marcos | 8 h | US01, US02 | 16–17 |
-| 5 | US05 | Larissa | Marcos | 6 h | US04 | 17 |
-| | | | **Total** | **40 h** | | |
+- **API (backend):** Marcos, com revisão da Larissa.
+- **Tela (frontend):** Larissa, com revisão do Marcos. Enquanto a API não está pronta, usa dados de exemplo do contrato.
+
+Estimativas em horas, incluindo testes de cada parte. Os responsáveis são uma proposta a confirmar com a Larissa (ver [acordo de equipe](acordo-de-equipe.md) e [decisões técnicas](decisoes-tecnicas.md)).
+
+| Ordem | ID | API (Marcos) | Tela (Larissa) | Total | Depende de | Semana prevista |
+| :---: | --- | :---: | :---: | :---: | --- | :---: |
+| 1 | US01 | 4 h | 4 h | 8 h | — | 15 |
+| 2 | US02 | 6 h | 6 h | 12 h | US01 | 15–16 |
+| 3 | US03 | 3 h | 3 h | 6 h | US01, US02 | 16 |
+| 4 | US04 | 3 h | 5 h | 8 h | US01, US02 | 16–17 |
+| 5 | US05 | 3 h | 3 h | 6 h | US04 | 17 |
+| | **Total** | **19 h** | **21 h** | **40 h** | | |
 
 Sobram cerca de 10 h para testes com usuários, ajustes e documentação. O cronograma completo está em [cronograma.md](cronograma.md).
 
@@ -29,13 +34,14 @@ Sobram cerca de 10 h para testes com usuários, ajustes e documentação. O cron
 
 Cada critério é verificável com um teste (automatizado ou manual). A história só é considerada pronta quando todos os critérios passam e a [Definition of Done](acordo-de-equipe.md#definition-of-done) é cumprida. Regras detalhadas em [dominio.md](dominio.md) e [contrato-api.md](contrato-api.md).
 
-### US01 — Cadastro e login
+### US01 — Login e criação de conta
 
-- O usuário consegue criar uma conta informando nome, e-mail e senha; o cadastro cria um usuário com papel `morador`.
-- O usuário consegue realizar login com credenciais válidas e passa a ter sessão ativa (`GET /api/auth/eu` retorna seus dados).
-- Login com credenciais inválidas retorna `401` com mensagem clara.
-- O sistema impede cadastro com e-mail já utilizado (`400`).
-- A senha é armazenada com hash e nunca aparece nas respostas da API.
+- O usuário consegue criar uma conta com e-mail e senha ou entrar com Google, usando o Firebase Auth.
+- Após entrar, o frontend chama `POST /api/auth/cadastro` e o backend cria o usuário com papel `morador` (ou devolve o já existente, sem duplicar).
+- `GET /api/auth/eu` retorna os dados do usuário logado.
+- Requisição sem token, ou com token inválido ou expirado, retorna `401`.
+- O sistema não recebe nem guarda senhas; elas ficam no Firebase.
+- O usuário consegue sair (logout) e perde o acesso às telas protegidas.
 
 ### US02 — Fazer pedido
 

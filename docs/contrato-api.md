@@ -11,6 +11,7 @@ Este documento define o contrato de comunicação entre o frontend e o backend d
 | | Decisão |
 | --- | --- |
 | Prefixo e versão | `/api` (sem versionamento na Etapa 1) |
+| Autenticação | Firebase Auth (e-mail e senha, ou Google). O frontend faz o login no Firebase e envia o ID token em todas as requisições: `Authorization: Bearer <idToken>` |
 | Barra final nas rotas | NÃO. Vale também para os links `next` e `previous` da paginação |
 | Convenção de nomes dos campos | `camelCase` |
 | Formato de datas | ISO 8601 em UTC para data/hora (`2026-09-29T10:30:00Z`) e `AAAA-MM-DD` para `dataDesejada` |
@@ -24,8 +25,8 @@ Este documento define o contrato de comunicação entre o frontend e o backend d
 
 | Papel | Valor no campo `papel` | Descrição |
 | --- | --- | --- |
-| Morador | `morador` | Cadastrado por `/api/auth/cadastro`. Todo cadastro público cria um morador |
-| Associação | `associacao` | Membro da Associação. Não se cadastra pela API pública; é promovido pela equipe/administração |
+| Morador | `morador` | Criado automaticamente no primeiro acesso (`/api/auth/cadastro`) |
+| Associação | `associacao` | Membro da Associação. Não se cadastra pela API; é promovido pela administração (T.I. da Associação) |
 
 ## Estados de status do pedido
 
@@ -57,14 +58,13 @@ Legenda: **Público** = sem login · **Morador\*** = apenas o autor do pedido ·
 | | GET | `/api/pedidos/{id}/historico` | Lista o histórico de status | 200 | Morador\* · Associação |
 | Categoria | GET | `/api/categorias` | Lista | 200 | Qualquer usuário autenticado |
 | | GET | `/api/categorias/{id}` | Consulta | 200 | Qualquer usuário autenticado |
-| Sessão | POST | `/api/auth/cadastro` | Cria usuário (morador) | 201 | Público |
-| | POST | `/api/auth/login` | Autentica | 200 | Público |
-| | POST | `/api/auth/logout` | Encerra sessão | 204 | Autenticado |
+| Autenticação | POST | `/api/auth/cadastro` | Cria o usuário no primeiro acesso (morador) ou devolve o existente; usa o nome do token ou o `nome` enviado | 201 (criado) / 200 (já existia) | Token do Firebase válido |
 | | GET | `/api/auth/eu` | Usuário atual | 200 / 401 | Autenticado |
 
 Regras gerais de acesso:
 
-- Rotas que não são `Público` retornam `401` se não houver sessão válida.
+- Login e logout acontecem no Firebase (frontend); a API não tem rotas de login nem de logout.
+- Todas as rotas exigem token válido. Sem token, ou com token inválido ou expirado, retornam `401`.
 - Morador acessando pedido de outro morador: `403` (em `GET /{id}`, `PATCH`, `/status`, `/historico`).
 - Morador tentando qualquer status além de `cancelado`: `403`.
 - Pedidos não são removidos: o cancelamento é uma mudança de status (por isso não existe `DELETE`).
@@ -164,7 +164,7 @@ Campos sem valor são retornados como `null` (por exemplo, `localizacao` em pedi
 
 ## Exemplos de criação do pedido
 
-`POST /api/pedidos` com corpo JSON. O autor é identificado pela sessão e o status inicial é sempre `solicitado`. Resposta `201` no formato de **Detalhes**.
+`POST /api/pedidos` com corpo JSON. O autor é identificado pelo token e o status inicial é sempre `solicitado`. Resposta `201` no formato de **Detalhes**.
 
 ### Pedido de material
 
@@ -244,7 +244,7 @@ Resposta `200` no formato de **Detalhes**. `observacao` é obrigatória quando o
 
 ```json
 {
-  "detail": "Usuário não autenticado."
+  "detail": "Token ausente, inválido ou expirado."
 }
 ```
 

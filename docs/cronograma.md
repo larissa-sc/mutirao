@@ -9,13 +9,13 @@ Marcos do projeto conforme o canvas: diagnóstico na **semana 14**, entrega na *
 | **Planejamento** | Ata do diagnóstico com a Associação | Larissa e Marcos | 14 | ⚠️ |
 | | Backlog com plano de trabalho, domínio e contrato da API corrigidos | Larissa e Marcos | 14 | ⚠️ |
 | | Acordo de equipe e metas definidas | Larissa e Marcos | 14 | ⚠️ |
-| **Backend** | US01 – cadastro e login | Larissa | 15 | ⚠️ |
-| | Categorias (seed) e US02 – fazer pedido (API) | Larissa | 15–16 | ⚠️ |
-| | US03 e US04 – consulta, cancelamento e listagem com filtros (API) | Larissa | 16–17 | ⚠️ |
-| | US05 – resposta ao pedido, status e histórico (API) | Larissa | 17 | ⚠️ |
-| **Frontend** | Telas de cadastro/login (US01) | Marcos | 15 | ⚠️ |
-| | Tela de fazer pedido (US02) e meus pedidos (US03) | Marcos | 15–16 | ⚠️ |
-| | Painel da Associação com filtros e resposta aos pedidos (US04, US05) | Marcos | 16–17 | ⚠️ |
+| **Backend** | US01 – login com Firebase (e-mail e Google) | Marcos | 15 | ⚠️ |
+| | Categorias (seed) e US02 – fazer pedido (API) | Marcos | 15–16 | ⚠️ |
+| | US03 e US04 – consulta, cancelamento e listagem com filtros (API) | Marcos | 16–17 | ⚠️ |
+| | US05 – resposta ao pedido, status e histórico (API) | Marcos | 17 | ⚠️ |
+| **Frontend** | Telas de login com Firebase (US01) | Larissa | 15 | ⚠️ |
+| | Tela de fazer pedido (US02) e meus pedidos (US03) | Larissa | 15–16 | ⚠️ |
+| | Painel da Associação com filtros e resposta aos pedidos (US04, US05) | Larissa | 16–17 | ⚠️ |
 | **Testes** | Testes automatizados do backend e do frontend | Larissa e Marcos | 15–17 | ⚠️ |
 | | Teste de usabilidade com moradores e membros da Associação ([metas](metas.md)) | Marcos (condução) | 17 | ⚠️ |
 | | Correções a partir do teste | Larissa e Marcos | 17–18 | ⚠️ |

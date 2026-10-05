@@ -28,14 +28,14 @@ Pessoa que acessa o sistema: morador/agricultor ou membro da Associação.
 | id | inteiro | sim | gerado |
 | nome | texto | sim | |
 | email | texto | sim | único |
-| senhaHash | texto | sim | nunca exposto na API |
+| firebaseUid | texto | sim | único; identificador do usuário no Firebase Auth |
 | papel | `morador` \| `associacao` | sim | padrão `morador` |
 | dataCriacao | data/hora | sim | gerado |
 
 **Regras**
-- E-mail é único; cadastro com e-mail existente é rejeitado (US01).
-- Todo cadastro público cria `morador`. O papel `associacao` é atribuído pela equipe/administração.
-- A senha é armazenada somente como hash.
+- A autenticação é feita pelo **Firebase Auth** (e-mail e senha, ou Google). O sistema não guarda nem recebe senhas.
+- O registro de `Usuario` é criado no primeiro acesso, a partir do token do Firebase (`firebaseUid`, `email`, `nome`). O e-mail e o `firebaseUid` são únicos.
+- Todo usuário novo é `morador`. O papel `associacao` é atribuído pela administração (T.I. da Associação).
 
 ## Categoria
 
