@@ -1,37 +1,38 @@
 # Personas
 
+As personas são fictícias e ilustram os dois perfis de uso do Mutirão na Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava.
+
 ## Perfil 1 - Membro da Associação
 
 **Persona fictícia:** José Amaro - 56 anos
-**Papel:** Membro da Associação de Moradores
+**Papel:** Membro da Associação de Moradores e Agricultores Familiares
 
 ### Contexto
 
-Participa das atividades da Associação de Moradores de Vila Nova de Cana Brava e atua no recebimento e acompanhamento das demandas apresentadas pelos moradores da comunidade.
+Participa das atividades da Associação da Vila Nova de Cana Brava e atua no recebimento e no atendimento dos pedidos dos moradores e agricultores, como sementes, adubo, ferramentas e serviços de máquina.
 
 ### Objetivo
 
-Receber, organizar e acompanhar as ocorrências relatadas pelos moradores, mantendo as informações necessárias para que possam ser analisadas e posteriormente encaminhadas aos responsáveis.
+Receber, organizar e responder os pedidos dos moradores, mantendo as informações necessárias para decidir, atender ou encaminhar cada um à Prefeitura.
 
 ### Situação atual
 
-Atualmente, as informações sobre problemas da comunidade podem ser comunicadas de maneira verbal ou informal. Isso dificulta a organização das demandas e pode fazer com que informações importantes sejam esquecidas, anotadas incorretamente ou repassadas de forma incompleta.
+Os pedidos chegam de maneira verbal ou informal. Isso dificulta a organização e pode fazer com que informações importantes sejam esquecidas, anotadas incorretamente ou repassadas de forma incompleta, e o histórico do que foi pedido e atendido se perde.
 
 ### Principais dificuldades
 
-* Receber informações de diferentes moradores sem uma forma padronizada de registro;
-* Organizar as ocorrências recebidas;
-* Evitar perda ou alteração de informações durante o repasse;
-* Consultar posteriormente os detalhes de uma ocorrência;
-* Acompanhar quais demandas já foram registradas e quais ainda precisam ser encaminhadas.
+* Receber pedidos de diferentes moradores sem uma forma padronizada de registro;
+* Saber exatamente o que foi pedido, em que quantidade e para quando;
+* Saber onde fica o trecho ou a propriedade nos pedidos de trator e patrol;
+* Acompanhar o que já foi atendido, o que foi encaminhado à Prefeitura e o que está pendente;
+* Dar um retorno ao morador sem depender de recados.
 
 ### Necessidades
 
-* Visualizar as ocorrências registradas pelos moradores;
-* Consultar descrição e localização do problema;
-* Visualizar uma foto da ocorrência quando disponível;
-* Acompanhar e atualizar o status das demandas;
-* Manter um histórico organizado para facilitar o encaminhamento das ocorrências.
+* Visualizar todos os pedidos registrados pelos moradores;
+* Filtrar por tipo (material ou serviço) e por status;
+* Aprovar, negar (com motivo), encaminhar à Prefeitura e marcar como atendido;
+* Manter um histórico organizado de cada pedido.
 
 ### Uso de tecnologia
 
@@ -39,86 +40,72 @@ Utiliza celular e/ou computador para acessar informações e realizar atividades
 
 ### Como o Mutirão ajuda
 
-O Mutirão centraliza as ocorrências registradas pelos moradores em um único sistema, permitindo que a Associação consulte, organize e acompanhe as demandas de forma estruturada.
+O Mutirão centraliza os pedidos em um único sistema, permitindo que a Associação consulte, responda e acompanhe cada um de forma estruturada.
 
-### Cenário de uso
+---
 
-Um morador identifica um problema na comunidade e registra uma ocorrência pelo Mutirão, informando sua descrição, categoria e localização e, se desejar, anexando uma foto. A ocorrência fica disponível para a Associação, que pode consultar as informações, organizar a demanda e acompanhar seu encaminhamento.
-
-
-
-
-## Perfil 2 - Morador
+## Perfil 2 - Morador / agricultor familiar
 
 **Nome fictício:** João
-**Papel:** Morador da comunidade
+**Papel:** Morador e agricultor familiar da comunidade
 
 ### Contexto
 
-Reside na comunidade de Vila Nova de Cana Brava e identifica situações que afetam o dia a dia dos moradores, como problemas de infraestrutura, limpeza, conservação e outros problemas existentes na comunidade.
+Reside na Vila Nova de Cana Brava e trabalha na agricultura familiar. Precisa de itens como sementes, adubo e ferramentas, e de serviços de máquina, como trator e patrol para a rodagem do ramal de acesso.
 
 ### Objetivo
 
-Comunicar problemas identificados na comunidade à Associação de Moradores e acompanhar o encaminhamento da ocorrência.
+Pedir à Associação o que precisa e acompanhar se o pedido foi aprovado, encaminhado e atendido.
 
 ### Situação atual
 
-Quando identifica um problema, o morador comunica a situação à Associação de maneira informal. Esse processo depende da comunicação direta através de canais particulares entre as pessoas e não possui um registro estruturado das informações.
+O pedido é feito verbalmente, por recado ou conversa com alguém da Associação. Não há registro estruturado, e o morador não sabe se o pedido foi anotado, se foi encaminhado à Prefeitura ou se vai ser atendido.
 
 ### Principais dificuldades
 
-* Encontrar uma forma mais fácil de comunicar problemas à Associação;
-* Garantir que as informações sobre o problema sejam transmitidas corretamente;
-* Informar exatamente onde o problema está localizado;
-* Fornecer evidências, como fotos, quando necessário;
-* Saber se a ocorrência foi recebida e está sendo acompanhada pela Associação.
+* Encontrar uma forma simples de fazer o pedido;
+* Garantir que o pedido chegue completo (o que, quanto, para quando, onde);
+* Saber se o pedido foi recebido e em que etapa está;
+* Entender o motivo quando um pedido não é atendido;
+* Recorrer a canais lentos, como a ouvidoria municipal, sem retorno ágil.
 
 ### Necessidades
 
-* Registrar uma ocorrência de maneira simples;
-* Indicar a localização da ocorrência;
-* Anexar uma foto opcionalmente;
-* Consultar suas próprias ocorrências;
-* Acompanhar o status das ocorrências registradas;
+* Fazer um pedido de maneira simples, pelo celular;
+* Informar o item e a quantidade e, em serviços de máquina, o local;
+* Consultar os próprios pedidos e seus status;
+* Cancelar um pedido que não precisa mais.
 
 ### Uso de tecnologia
 
-Utiliza principalmente o celular para comunicação e acesso a serviços digitais, podendo utilizar o Mutirão para registrar e acompanhar ocorrências.
+Utiliza principalmente o celular para comunicação e acesso a serviços digitais.
 
 ### Como o Mutirão ajuda
 
-O Mutirão oferece ao morador um meio organizado e prático para registrar problemas encontrados na comunidade, reunindo em uma única ocorrência as informações necessárias para que a Associação possa consultar e encaminhar a demanda.
+O Mutirão oferece um meio organizado e prático para fazer pedidos à Associação e acompanhar cada um até ser atendido, sem depender de recados.
 
-### Cenário de uso
-
-O morador identifica um problema na comunidade, acessa o Mutirão e registra uma ocorrência informando o que aconteceu, selecionando uma categoria e indicando a localização. Caso possua uma evidência visual, pode anexar uma foto. Após o registro, consegue consultar a ocorrência e acompanhar seu status.
-
-
+---
 
 # Cenário Principal
 
-## Registro e acompanhamento de uma ocorrência
+## Pedido de material e de serviço de máquina
 
-João, morador da comunidade de Vila Nova de Cana Brava, identifica um problema de infraestrutura em uma rua próxima à sua residência. 
+João, agricultor da Vila Nova de Cana Brava, precisa de sementes de milho para o próximo plantio e de uma rodagem no ramal que dá acesso à sua propriedade.
 
-Para comunicar o problema, João acessa o Mutirão e registra uma nova ocorrência. Ele informa um título e uma descrição do problema, seleciona a categoria correspondente e informa a localização. Caso possua uma imagem que ajude a identificar a situação, também pode anexar uma foto.
+João acessa o Mutirão e faz um pedido de **material**: escolhe a categoria "Sementes", informa o item, a quantidade (20 kg) e, se quiser, para quando precisa. Em seguida, faz um pedido de **serviço de máquina**: escolhe "Serviço de patrol", descreve o trecho e marca a localização no mapa.
 
-Após o registro, a ocorrência fica disponível para consulta pela Associação de Moradores. Maria, membro da Associação, acessa o sistema e visualiza a nova ocorrência com as informações fornecidas pelo morador, incluindo sua categoria, localização, descrição e, quando disponível, a fotografia.
+José, membro da Associação, acessa o painel e vê os dois pedidos novos. Coloca ambos em análise. O de sementes, que a Associação pode atender, ele **aprova**. O de patrol é um serviço da Prefeitura, então ele o **encaminha** e registra na observação que o ofício foi enviado.
 
-A Associação utiliza essas informações para organizar e acompanhar a demanda, podendo posteriormente encaminhá-la aos responsáveis pelo atendimento da situação.
-
-João consegue consultar a ocorrência que registrou e acompanhar seu status, enquanto Maria mantém as informações organizadas para facilitar o acompanhamento e o encaminhamento das demandas da comunidade.
+João consulta "Meus pedidos" e vê o status de cada um: o de sementes aprovado e o de patrol encaminhado à Prefeitura. Quando a Associação entrega as sementes e a máquina faz a rodagem, José marca os pedidos como **atendidos**. Se algum pedido fosse negado, João veria o motivo registrado.
 
 ### Fluxo resumido
 
-**Morador identifica o problema**
+**Morador faz o pedido**
 ↓
-**Registra a ocorrência no Mutirão**
+**Associação recebe e coloca em análise**
 ↓
-**Associação recebe e consulta a ocorrência**
+**Material: aprova** · **Serviço de máquina: encaminha à Prefeitura** · (ou nega, com motivo)
 ↓
-**Associação organiza e acompanha a demanda**
-↓
-**Ocorrência pode ser encaminhada aos responsáveis**
+**Associação marca como atendido**
 ↓
 **Morador acompanha o status**

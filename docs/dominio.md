@@ -1,0 +1,150 @@
+# Domínio do Mutirão
+
+Entidades do MVP, seus atributos, relações e regras principais. Os nomes dos campos seguem o [contrato da API](contrato-api.md).
+
+O Mutirão registra **pedidos** que moradores e agricultores familiares fazem à Associação. Há dois tipos de pedido:
+
+- **Material:** sementes, adubo, ferramentas e outros itens. A Associação aprova ou nega.
+- **Serviço de máquina:** trator e patrol (rodagem de estrada). O serviço é da Prefeitura; a Associação **encaminha** o pedido e registra o andamento. O sistema não se integra à Prefeitura.
+
+## Diagrama de relações
+
+```mermaid
+erDiagram
+    USUARIO ||--o{ PEDIDO : faz
+    CATEGORIA ||--o{ PEDIDO : classifica
+    LOCALIZACAO |o--|| PEDIDO : situa
+    PEDIDO ||--o{ HISTORICO_STATUS : possui
+    USUARIO ||--o{ HISTORICO_STATUS : altera
+```
+
+## Usuario
+
+Pessoa que acessa o sistema: morador/agricultor ou membro da Associação.
+
+| Atributo | Tipo | Obrigatório | Observação |
+| --- | --- | :---: | --- |
+| id | inteiro | sim | gerado |
+| nome | texto | sim | |
+| email | texto | sim | único |
+| senhaHash | texto | sim | nunca exposto na API |
+| papel | `morador` \| `associacao` | sim | padrão `morador` |
+| dataCriacao | data/hora | sim | gerado |
+
+**Regras**
+- E-mail é único; cadastro com e-mail existente é rejeitado (US01).
+- Todo cadastro público cria `morador`. O papel `associacao` é atribuído pela equipe/administração.
+- A senha é armazenada somente como hash.
+
+## Categoria
+
+Tipo de pedido. Define se o pedido é de material ou de serviço de máquina.
+
+| Atributo | Tipo | Obrigatório | Observação |
+| --- | --- | :---: | --- |
+| id | inteiro | sim | gerado |
+| nome | texto | sim | único |
+| tipo | `material` \| `servico` | sim | define as regras de preenchimento do pedido |
+
+**Regras**
+- Lista fixa carregada por seed (sugestão, a confirmar com a Associação):
+
+| Nome | Tipo |
+| --- | --- |
+| Sementes | material |
+| Adubo | material |
+| Ferramentas | material |
+| Serviço de trator | servico |
+| Serviço de patrol | servico |
+| Outros | material |
+
+- Na Etapa 1 não há CRUD de categorias.
+
+## Localizacao
+
+Ponto geográfico da propriedade ou do trecho onde o serviço será feito.
+
+| Atributo | Tipo | Obrigatório | Observação |
+| --- | --- | :---: | --- |
+| latitude | decimal | sim | entre -90 e 90 |
+| longitude | decimal | sim | entre -180 e 180 |
+
+**Regras**
+- Objeto de valor: pertence a um único pedido (relação 1:1) e é salvo junto com ele, sem rota própria.
+- **Obrigatória** em pedidos de `servico` (a Prefeitura precisa saber onde ir). **Opcional** em pedidos de `material`.
+
+## Pedido
+
+Solicitação de um morador ou agricultor à Associação.
+
+| Atributo | Tipo | Obrigatório | Observação |
+| --- | --- | :---: | --- |
+| id | inteiro | sim | gerado |
+| categoriaId | referência | sim | → Categoria |
+| item | texto | sim | o que está sendo pedido (ex.: "Semente de milho", "Rodagem do ramal") |
+| quantidade | decimal | material: sim · serviço: não | maior que zero |
+| unidade | texto | quando há quantidade | ex.: `kg`, `saco`, `unidade`, `hora` |
+| descricao | texto | não | detalhes adicionais |
+| dataDesejada | data | não | para quando precisa (ex.: antes do plantio) |
+| localizacao | Localizacao | serviço: sim · material: não | 1:1 |
+| autorId | referência | sim | → Usuario, definido pela sessão |
+| status | enum | sim | começa em `solicitado` |
+| dataCriacao | data/hora | sim | gerado |
+| dataAtualizacao | data/hora | sim | gerado |
+
+**Regras**
+- O autor é sempre o usuário autenticado; não pode ser informado pelo cliente.
+- Morador vê apenas os próprios pedidos; Associação vê todos.
+- Morador só edita o pedido enquanto estiver `solicitado` e pode cancelá-lo enquanto estiver `solicitado` ou `emAnalise`.
+- O status só muda por `PATCH /pedidos/{id}/status`. A Associação faz as transições de análise; o morador só pode cancelar o próprio pedido.
+- Pedidos não são apagados; ficam como `cancelado` para preservar o histórico.
+
+## Status do pedido
+
+| Status | Significado | Vale para |
+| --- | --- | --- |
+| `solicitado` | Estado inicial, definido ao criar | todos |
+| `emAnalise` | Associação está avaliando | todos |
+| `aprovado` | Associação aprovou; falta entregar | material |
+| `encaminhado` | Associação encaminhou à Prefeitura | serviço |
+| `atendido` | Item entregue ou serviço realizado | todos |
+| `negado` | Não será atendido (exige motivo) | todos |
+| `cancelado` | Cancelado pelo morador | todos |
+
+Transições permitidas:
+
+| De | Para |
+| --- | --- |
+| `solicitado` | `emAnalise`, `negado`, `cancelado` |
+| `emAnalise` | `aprovado` (material), `encaminhado` (serviço), `negado`, `cancelado` |
+| `aprovado` | `atendido`, `negado` |
+| `encaminhado` | `atendido`, `negado` (Prefeitura não atendeu) |
+| `atendido`, `negado`, `cancelado` | final |
+
+## HistoricoStatus
+
+Registro de cada mudança de status de um pedido.
+
+| Atributo | Tipo | Obrigatório | Observação |
+| --- | --- | :---: | --- |
+| id | inteiro | sim | gerado |
+| pedidoId | referência | sim | → Pedido |
+| statusAnterior | enum | não | `null` no primeiro registro |
+| statusNovo | enum | sim | |
+| observacao | texto | `negado`: sim · demais: não | motivo ou nota (ex.: "Ofício enviado à Prefeitura") |
+| responsavelId | referência | sim | → Usuario que fez a alteração |
+| data | data/hora | sim | gerado |
+
+**Regras**
+- Criado automaticamente na criação do pedido (`null` → `solicitado`) e a cada mudança de status.
+- É somente de inclusão: nunca é editado nem apagado.
+
+## Resumo das relações
+
+| Relação | Cardinalidade |
+| --- | --- |
+| Usuario → Pedido | 1 usuário faz N pedidos |
+| Categoria → Pedido | 1 categoria classifica N pedidos |
+| Pedido ↔ Localizacao | 1:0..1 (obrigatória em serviço) |
+| Pedido → HistoricoStatus | 1 pedido possui N registros de histórico |
+| Usuario → HistoricoStatus | 1 usuário (Associação ou morador, ao cancelar) faz N alterações |

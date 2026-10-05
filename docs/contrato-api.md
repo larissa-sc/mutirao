@@ -4,133 +4,212 @@
 
 Este documento define o contrato de comunicação entre o frontend e o backend do sistema Mutirão, especificando os recursos disponíveis, rotas, métodos HTTP, formatos de resposta, regras de acesso, paginação, filtros e formato dos erros.
 
+> **Terminologia:** o termo oficial é **pedido** (rota `pedidos`, campos e documentos). Regras de negócio, atributos e transições estão em [dominio.md](dominio.md).
+
 ## As 9 decisões do contrato
 
 | | Decisão |
 | --- | --- |
-| Prefixo e versão | `/api` |
-| Barra final nas rotas | NÃO |
+| Prefixo e versão | `/api` (sem versionamento na Etapa 1) |
+| Barra final nas rotas | NÃO. Vale também para os links `next` e `previous` da paginação |
 | Convenção de nomes dos campos | `camelCase` |
-| Formato de datas | ISO 8601 |
-| Formato de valores monetários | string decimal |
-| Paginação: estilo e tamanho padrão | uso de `count`, `next`, `previous` e `results` com 20 itens como tamanho padrão |
-| Como se filtra, ordena e busca | parâmetros query string com `?q=`, `?ordering=` e `?{tipoEx}=` |
-| Formato do erro de validação e do erro de permissão | objeto JSON erro, 400 para validação, 401 para autenticação, 403 para permissão |
-| Relações | relacionamentos serão representados de forma aninhada; na escrita, serão informados por ID |
+| Formato de datas | ISO 8601 em UTC para data/hora (`2026-09-29T10:30:00Z`) e `AAAA-MM-DD` para `dataDesejada` |
+| Formato de valores monetários | Não se aplica (o sistema não trabalha com valores monetários) |
+| Paginação: estilo e tamanho padrão | `count`, `next`, `previous` e `results`; parâmetros `?page=` (começa em 1) e `?pageSize=` (padrão 20, máximo 100) |
+| Como se filtra, ordena e busca | Query string: `?q=` (busca em item e descrição), `?ordering=` (ex.: `-dataCriacao`) e filtros: `?status=`, `?categoriaId=`, `?tipo=material\|servico` |
+| Formato do erro de validação e do erro de permissão | JSON. `400` validação (objeto campo → lista de mensagens), `401` não autenticado e `403` sem permissão (objeto com `detail`) |
+| Relações | Aninhadas na leitura (`categoria`, `autor`, `localizacao`); na escrita, informadas por ID (`categoriaId`) |
 
-## Tabela de Recursos
+## Perfis (papéis)
 
-| Recurso     | Método | Rota                              | O que faz                     | Sucesso   |
-| ----------- | ------ | --------------------------------- | ----------------------------- | --------- |
-| Ocorrência  | GET    | `/api/ocorrencias`                | Listagem                      | 200       |
-|             | POST   | `/api/ocorrencias`                | Cria ocorrência               | 201       |
-|             | GET    | `/api/ocorrencias/{id}`           | Consulta                      | 200       |
-|             | PATCH  | `/api/ocorrencias/{id}`           | Atualiza parcialmente         | 200       |
-|             | DELETE | `/api/ocorrencias/{id}`           | Remove                        | 204       |
-| Categorias  | GET    | `/api/categorias`                 | Litagem                       | 200       |
-|             | GET    | `/api/categorias/{id}`            | Consulta                      | 200       |
-| Sessão      | POST   | `/api/auth/cadastro`              | Cria usuário                  | 201       |
-|             | POST   | `/api/auth/login`                 | Autentica                     | 200       |
-|             | POST   | `/api/auth/logout`                | Encerra sessão                | 204       |
-|             | GET    | `/api/auth/eu`                    | Usuário atual                 | 200 / 401 |
+| Papel | Valor no campo `papel` | Descrição |
+| --- | --- | --- |
+| Morador | `morador` | Cadastrado por `/api/auth/cadastro`. Todo cadastro público cria um morador |
+| Associação | `associacao` | Membro da Associação. Não se cadastra pela API pública; é promovido pela equipe/administração |
 
-## Exemplo de resposta JSON
+## Estados de status do pedido
 
-### Listagem
+| Valor | Significado | Vale para | Pode ir para |
+| --- | --- | --- | --- |
+| `solicitado` | Estado inicial, definido ao criar | todos | `emAnalise`, `negado`, `cancelado` |
+| `emAnalise` | Associação avaliando | todos | `aprovado`\*, `encaminhado`\*\*, `negado`, `cancelado` |
+| `aprovado` | Associação aprovou; falta entregar | material | `atendido`, `negado` |
+| `encaminhado` | Associação encaminhou à Prefeitura | serviço | `atendido`, `negado` |
+| `atendido` | Item entregue ou serviço realizado | todos | (final) |
+| `negado` | Não será atendido; exige `observacao` | todos | (final) |
+| `cancelado` | Cancelado pelo morador | todos | (final) |
+
+\* somente pedidos de categoria `material` · \*\* somente pedidos de categoria `servico`.
+
+Transição inválida retorna `400`. Toda mudança gera um registro de histórico (ver [dominio.md](dominio.md#historicostatus)).
+
+## Tabela de Recursos e permissões
+
+Legenda: **Público** = sem login · **Morador\*** = apenas o autor do pedido · **Associação** = qualquer membro da Associação.
+
+| Recurso | Método | Rota | O que faz | Sucesso | Quem pode |
+| --- | --- | --- | --- | --- | --- |
+| Pedido | GET | `/api/pedidos` | Lista (paginada) | 200 | Morador (vê só os seus) · Associação (vê todos) |
+| | POST | `/api/pedidos` | Cria pedido | 201 | Morador · Associação |
+| | GET | `/api/pedidos/{id}` | Consulta | 200 | Morador\* · Associação |
+| | PATCH | `/api/pedidos/{id}` | Atualiza item, quantidade, unidade, descrição, data desejada ou localização | 200 | Morador\* (somente enquanto `solicitado`) |
+| | PATCH | `/api/pedidos/{id}/status` | Altera o status | 200 | Associação (qualquer transição válida) · Morador\* (somente `cancelado`) |
+| | GET | `/api/pedidos/{id}/historico` | Lista o histórico de status | 200 | Morador\* · Associação |
+| Categoria | GET | `/api/categorias` | Lista | 200 | Qualquer usuário autenticado |
+| | GET | `/api/categorias/{id}` | Consulta | 200 | Qualquer usuário autenticado |
+| Sessão | POST | `/api/auth/cadastro` | Cria usuário (morador) | 201 | Público |
+| | POST | `/api/auth/login` | Autentica | 200 | Público |
+| | POST | `/api/auth/logout` | Encerra sessão | 204 | Autenticado |
+| | GET | `/api/auth/eu` | Usuário atual | 200 / 401 | Autenticado |
+
+Regras gerais de acesso:
+
+- Rotas que não são `Público` retornam `401` se não houver sessão válida.
+- Morador acessando pedido de outro morador: `403` (em `GET /{id}`, `PATCH`, `/status`, `/historico`).
+- Morador tentando qualquer status além de `cancelado`: `403`.
+- Pedidos não são removidos: o cancelamento é uma mudança de status (por isso não existe `DELETE`).
+- Pedido inexistente: `404`.
+
+## Exemplos de resposta JSON
+
+### Listagem (`GET /api/pedidos?page=1&status=solicitado`)
 
 ```json
 {
   "count": 42,
-  "next": "https://mutirao.org/api/ocorrencias/?page=2",
+  "next": "https://mutirao.org/api/pedidos?page=2&status=solicitado",
   "previous": null,
   "results": [
     {
       "id": 10,
-      "titulo": "Buraco na rua",
-      "descricao": "Há um buraco próximo à praça.",
-      "categoria": {
-        "id": 1,
-        "nome": "Infraestrutura"
-      },
-      "autor": {
-        "id": 7,
-        "nome": "Maria Silva"
-      },
-      "localizacao": {
-        "latitude": -8.123456,
-        "longitude": -34.987654
-      },
+      "categoria": { "id": 1, "nome": "Sementes", "tipo": "material" },
+      "item": "Semente de milho",
+      "quantidade": 20,
+      "unidade": "kg",
+      "descricao": null,
+      "dataDesejada": "2026-11-15",
+      "localizacao": null,
+      "autor": { "id": 7, "nome": "Maria Silva" },
       "dataCriacao": "2026-09-29T10:30:00Z",
-      "status:" "emAnalise"
-    }
-
+      "status": "solicitado"
+    },
     {
       "id": 11,
-      "titulo": "Acúmulo de lixo",
-      "descricao": "Há lixo acumulado próximo ao terreno.",
-      "categoria": {
-        "id": 2,
-        "nome": "Limpeza e conservação"
-      },
-      "autor": {
-        "id": 12,
-        "nome": "João Santos"
-      },
-       "localizacao": {
-        "latitude": -8.124321,
-        "longitude": -34.986543
-      },
+      "categoria": { "id": 5, "nome": "Serviço de patrol", "tipo": "servico" },
+      "item": "Rodagem do ramal de acesso",
+      "quantidade": null,
+      "unidade": null,
+      "descricao": "Trecho com buracos, da porteira até a casa de farinha.",
+      "dataDesejada": null,
+      "localizacao": { "latitude": -8.124321, "longitude": -34.986543 },
+      "autor": { "id": 12, "nome": "João Santos" },
       "dataCriacao": "2026-09-29T11:15:00Z",
-      "status:" "emAnalise"
+      "status": "encaminhado"
     }
   ]
 }
 ```
 
-### Detalhes
+### Detalhes (`GET /api/pedidos/{id}`)
 
 ```json
 {
-  "id": 10,
-  "titulo": "Buraco na rua",
-  "descricao": "Há um buraco próximo à praça.",
-  "categoria": {
+  "id": 11,
+  "categoria": { "id": 5, "nome": "Serviço de patrol", "tipo": "servico" },
+  "item": "Rodagem do ramal de acesso",
+  "quantidade": null,
+  "unidade": null,
+  "descricao": "Trecho com buracos, da porteira até a casa de farinha.",
+  "dataDesejada": null,
+  "localizacao": { "latitude": -8.124321, "longitude": -34.986543 },
+  "autor": { "id": 12, "nome": "João Santos" },
+  "dataCriacao": "2026-09-29T11:15:00Z",
+  "dataAtualizacao": "2026-09-30T14:00:00Z",
+  "status": "encaminhado"
+}
+```
+
+Campos sem valor são retornados como `null` (por exemplo, `localizacao` em pedido de material).
+
+### Histórico (`GET /api/pedidos/{id}/historico`)
+
+```json
+[
+  {
     "id": 1,
-    "nome": "Infraestrutura"
+    "statusAnterior": null,
+    "statusNovo": "solicitado",
+    "observacao": null,
+    "responsavel": { "id": 12, "nome": "João Santos" },
+    "data": "2026-09-29T11:15:00Z"
   },
-  "autor": {
-    "id": 7,
-    "nome": "Maria Silva"
+  {
+    "id": 2,
+    "statusAnterior": "solicitado",
+    "statusNovo": "emAnalise",
+    "observacao": null,
+    "responsavel": { "id": 3, "nome": "José Amaro" },
+    "data": "2026-09-30T09:00:00Z"
   },
-  "localizacao": {
-    "latitude": -8.123456,
-    "longitude": -34.987654
-  },
-  "foto": "https://exemplo.com/uploads/ocorrencias/15.jpg",
-  "dataCriacao": "2026-09-29T10:30:00Z",
-  "status:" "emAnalise"
-}
-```
-Se nao houver fotografia (opcional): 
-```json 
-"foto": null
+  {
+    "id": 3,
+    "statusAnterior": "emAnalise",
+    "statusNovo": "encaminhado",
+    "observacao": "Ofício enviado à Prefeitura.",
+    "responsavel": { "id": 3, "nome": "José Amaro" },
+    "data": "2026-09-30T14:00:00Z"
+  }
+]
 ```
 
-## Exemplo de criação da ocorrência
+## Exemplos de criação do pedido
+
+`POST /api/pedidos` com corpo JSON. O autor é identificado pela sessão e o status inicial é sempre `solicitado`. Resposta `201` no formato de **Detalhes**.
+
+### Pedido de material
 
 ```json
 {
-  "titulo": "Buraco na rua",
-  "descricao": "Há um buraco próximo à praça.",
   "categoriaId": 1,
-  "localizacao": {
-    "latitude": -8.123456,
-    "longitude": -34.987654
-  }
+  "item": "Semente de milho",
+  "quantidade": 20,
+  "unidade": "kg",
+  "dataDesejada": "2026-11-15"
 }
 ```
 
-Criação de ocorrência: utiliza multipart/form-data, permitindo o envio dos dados da ocorrência e, opcionalmente, uma imagem. A localização é obrigatória. O autor é identificado pela sessão do usuário autenticado.
+### Pedido de serviço de máquina
+
+```json
+{
+  "categoriaId": 5,
+  "item": "Rodagem do ramal de acesso",
+  "descricao": "Trecho com buracos, da porteira até a casa de farinha.",
+  "localizacao": { "latitude": -8.124321, "longitude": -34.986543 }
+}
+```
+
+Regras de preenchimento:
+
+| Campo | Material | Serviço |
+| --- | :---: | :---: |
+| `categoriaId`, `item` | obrigatório | obrigatório |
+| `quantidade`, `unidade` | obrigatório | opcional |
+| `localizacao` | opcional | obrigatório |
+| `descricao`, `dataDesejada` | opcional | opcional |
+
+## Exemplo de atualização de status
+
+`PATCH /api/pedidos/{id}/status`, corpo JSON:
+
+```json
+{
+  "status": "negado",
+  "observacao": "Estoque de sementes esgotado neste mês."
+}
+```
+
+Resposta `200` no formato de **Detalhes**. `observacao` é obrigatória quando o status é `negado` e opcional nos demais. O morador só pode enviar `{ "status": "cancelado" }`.
 
 ## Exemplos de erro
 
@@ -138,8 +217,16 @@ Criação de ocorrência: utiliza multipart/form-data, permitindo o envio dos da
 
 ```json
 {
-  "titulo": ["Este campo é obrigatório."],
-  "categoriaId": ["Este campo é obrigatório."]
+  "item": ["Este campo é obrigatório."],
+  "quantidade": ["Informe a quantidade para pedidos de material."]
+}
+```
+
+### Transição de status inválida - 400 Bad Request
+
+```json
+{
+  "status": ["Não é possível mudar de \"atendido\" para \"emAnalise\"."]
 }
 ```
 
@@ -158,8 +245,9 @@ Criação de ocorrência: utiliza multipart/form-data, permitindo o envio dos da
   "detail": "Você não tem permissão para realizar esta operação."
 }
 ```
+
 ```json
 {
-  "detail": "O prazo de 24 horas para exclusão desta ocorrência foi encerrado."
+  "detail": "Este pedido não pode mais ser alterado porque já está em análise."
 }
 ```
