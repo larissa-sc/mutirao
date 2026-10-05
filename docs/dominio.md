@@ -2,10 +2,11 @@
 
 Entidades do MVP, seus atributos, relações e regras principais. Os nomes dos campos seguem o [contrato da API](contrato-api.md).
 
-O Mutirão registra **pedidos** que moradores e agricultores familiares fazem à Associação. Há dois tipos de pedido:
+O Mutirão registra **pedidos** que moradores e agricultores familiares fazem à Associação. Há três tipos de pedido:
 
 - **Material:** sementes, adubo, ferramentas e outros itens. A Associação aprova ou nega.
 - **Serviço de máquina:** trator e patrol (rodagem de estrada). O serviço é da Prefeitura; a Associação **encaminha** o pedido e registra o andamento. O sistema não se integra à Prefeitura.
+- **Documento:** declarações que a Associação emite (ex.: de morador/residência e de convivência). A Associação aprova, emite o documento (assinado pelo presidente) e o marca como atendido quando entregue. ⚠️ Confirmar quais declarações existem.
 
 ## Diagrama de relações
 
@@ -38,13 +39,13 @@ Pessoa que acessa o sistema: morador/agricultor ou membro da Associação.
 
 ## Categoria
 
-Tipo de pedido. Define se o pedido é de material ou de serviço de máquina.
+Tipo de pedido. Define se o pedido é de material, de serviço de máquina ou de documento.
 
 | Atributo | Tipo | Obrigatório | Observação |
 | --- | --- | :---: | --- |
 | id | inteiro | sim | gerado |
 | nome | texto | sim | único |
-| tipo | `material` \| `servico` | sim | define as regras de preenchimento do pedido |
+| tipo | `material` \| `servico` \| `documento` | sim | define as regras de preenchimento do pedido |
 
 **Regras**
 - Lista fixa carregada por seed (sugestão, a confirmar com a Associação):
@@ -56,6 +57,7 @@ Tipo de pedido. Define se o pedido é de material ou de serviço de máquina.
 | Ferramentas | material |
 | Serviço de trator | servico |
 | Serviço de patrol | servico |
+| Declaração | documento |
 | Outros | material |
 
 - Na Etapa 1 não há CRUD de categorias.
@@ -81,10 +83,10 @@ Solicitação de um morador ou agricultor à Associação.
 | --- | --- | :---: | --- |
 | id | inteiro | sim | gerado |
 | categoriaId | referência | sim | → Categoria |
-| item | texto | sim | o que está sendo pedido (ex.: "Semente de milho", "Rodagem do ramal") |
-| quantidade | decimal | material: sim · serviço: não | maior que zero |
+| item | texto | sim | o que está sendo pedido (ex.: "Semente de milho", "Rodagem do ramal", "Declaração de morador") |
+| quantidade | decimal | material: sim · serviço e documento: não | maior que zero |
 | unidade | texto | quando há quantidade | ex.: `kg`, `saco`, `unidade`, `hora` |
-| descricao | texto | não | detalhes adicionais |
+| descricao | texto | não | detalhes adicionais (em declaração, a finalidade) |
 | dataDesejada | data | não | para quando precisa (ex.: antes do plantio) |
 | localizacao | Localizacao | serviço: sim · material: não | 1:1 |
 | autorId | referência | sim | → Usuario, definido pela sessão |
@@ -105,9 +107,9 @@ Solicitação de um morador ou agricultor à Associação.
 | --- | --- | --- |
 | `solicitado` | Estado inicial, definido ao criar | todos |
 | `emAnalise` | Associação está avaliando | todos |
-| `aprovado` | Associação aprovou; falta entregar | material |
+| `aprovado` | Associação aprovou; falta entregar o item ou emitir o documento | material, documento |
 | `encaminhado` | Associação encaminhou à Prefeitura | serviço |
-| `atendido` | Item entregue ou serviço realizado | todos |
+| `atendido` | Item entregue, serviço realizado ou declaração entregue | todos |
 | `negado` | Não será atendido (exige motivo) | todos |
 | `cancelado` | Cancelado pelo morador | todos |
 
@@ -116,7 +118,7 @@ Transições permitidas:
 | De | Para |
 | --- | --- |
 | `solicitado` | `emAnalise`, `negado`, `cancelado` |
-| `emAnalise` | `aprovado` (material), `encaminhado` (serviço), `negado`, `cancelado` |
+| `emAnalise` | `aprovado` (material ou documento), `encaminhado` (serviço), `negado`, `cancelado` |
 | `aprovado` | `atendido`, `negado` |
 | `encaminhado` | `atendido`, `negado` (Prefeitura não atendeu) |
 | `atendido`, `negado`, `cancelado` | final |

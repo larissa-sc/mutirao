@@ -3,10 +3,10 @@
 | MVP | Fora do escopo | Futuro |
 | ---| --- | --- |
 | Cadastro e autenticação de usuários | Integração direta com sistemas da Prefeitura | Notificações sobre mudança de status |
-| Pedido de material (sementes, adubo, ferramentas) e de serviço de máquina (trator, patrol), com item, quantidade e, nos serviços, localização | Entrega dos itens ou execução dos serviços pela plataforma | Filtros e buscas mais avançados |
+| Pedido de material (sementes, adubo, ferramentas), de serviço de máquina (trator, patrol) e de declaração (morador, convivência), com item, quantidade e, nos serviços, localização | Entrega dos itens ou execução dos serviços pela plataforma | Filtros e buscas mais avançados |
 | Consulta, acompanhamento e cancelamento dos próprios pedidos pelo morador | Chat entre moradores e Associação | Histórico mais detalhado das alterações do pedido |
 | Consulta e organização dos pedidos pela Associação | Aplicativo mobile nativo | Relatórios simples sobre os pedidos |
-| Atualização do status pela Associação: aprovar, negar com motivo, encaminhar à Prefeitura e marcar como atendido | Controle de estoque e de prioridade/fila de pedidos | Melhorias visuais e recursos adicionais de visualização |
+| Atualização do status pela Associação: aprovar, negar com motivo, encaminhar à Prefeitura (máquinas) e marcar como atendido (inclui a declaração emitida e assinada pelo presidente) | Controle de estoque e de prioridade/fila de pedidos | Melhorias visuais e recursos adicionais de visualização |
 
 
 ## 2 - Justificativa do que ficou fora do escopo

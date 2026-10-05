@@ -3,7 +3,7 @@
 | ID | História de usuário | Prioridade |
 | --- | --- | --- |
 | US01 | Como **morador/agricultor**, quero criar uma conta e fazer login para acessar o Mutirão. | Must |
-| US02 | Como **morador/agricultor**, quero fazer um pedido de material (sementes, adubo, ferramentas) ou de serviço de máquina (trator, patrol), informando o que preciso, para solicitá-lo à Associação. | Must |
+| US02 | Como **morador/agricultor**, quero fazer um pedido de material (sementes, adubo, ferramentas), de serviço de máquina (trator, patrol) ou de declaração (morador, convivência), informando o que preciso, para solicitá-lo à Associação. | Must |
 | US03 | Como **morador/agricultor**, quero consultar meus pedidos e seus status, e cancelar um pedido que não preciso mais, para acompanhar o que solicitei. | Must |
 | US04 | Como **membro da Associação**, quero visualizar e organizar os pedidos dos moradores para saber o que está pendente. | Must |
 | US05 | Como **membro da Associação**, quero aprovar, negar (com motivo), encaminhar à Prefeitura ou marcar como atendido um pedido, para registrar seu andamento. | Must |
@@ -42,6 +42,7 @@ Cada critério é verificável com um teste (automatizado ou manual). A históri
 - O morador autenticado consegue criar um pedido e recebe `201`, com status `solicitado`.
 - Em pedido de **material**, categoria, item, quantidade e unidade são obrigatórios; a falta de qualquer um retorna `400` indicando o campo.
 - Em pedido de **serviço de máquina**, categoria, item e localização são obrigatórios; quantidade é opcional.
+- Em pedido de **declaração**, categoria e item (tipo da declaração) são obrigatórios; a finalidade vai na descrição.
 - Descrição e data desejada são opcionais.
 - O pedido fica associado ao morador que o criou.
 - Usuário não autenticado recebe `401` ao tentar criar.
@@ -58,14 +59,14 @@ Cada critério é verificável com um teste (automatizado ou manual). A históri
 
 - A Associação consegue visualizar os pedidos de todos os moradores.
 - É possível consultar todas as informações do pedido (categoria, item, quantidade, local, autor, data desejada, status).
-- A Associação consegue filtrar por tipo (material/serviço), categoria e status e ordenar por data.
+- A Associação consegue filtrar por tipo (material/serviço/declaração), categoria e status e ordenar por data.
 - Morador não tem acesso à listagem geral.
 
 ### US05 — Responder pedido e atualizar status
 
-- A Associação consegue colocar o pedido em análise, aprová-lo (material), encaminhá-lo à Prefeitura (serviço), negá-lo ou marcá-lo como atendido, seguindo as transições permitidas.
+- A Associação consegue colocar o pedido em análise, aprová-lo (material ou declaração), encaminhá-lo à Prefeitura (serviço), negá-lo ou marcá-lo como atendido, seguindo as transições permitidas.
 - Negar exige uma observação com o motivo.
-- Transição inválida retorna `400` (por exemplo, `aprovado` em pedido de serviço).
+- Transição inválida retorna `400` (por exemplo, `aprovado` em pedido de serviço, ou `encaminhado` em material).
 - O novo status e, se houver, a observação ficam disponíveis para consulta pelo morador.
 - Cada mudança gera um registro no histórico com responsável e data.
 - Apenas usuários da Associação podem alterar o status (o morador só cancela o próprio pedido; outras tentativas retornam `403`).

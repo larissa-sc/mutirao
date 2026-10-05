@@ -9,7 +9,7 @@
 
 ## 1. Problema
 
-> Na Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava, os moradores e agricultores precisam solicitar à Associação itens e serviços, como sementes, adubo, ferramentas e serviços de máquina (trator e patrol), e a Associação precisa manter registro desses pedidos e de seu andamento, inclusive dos que são encaminhados à Prefeitura. Atualmente, esse processo é realizado principalmente de forma verbal e informal, o que causa ruídos de comunicação, desencontros e perda do histórico dos pedidos.
+> Na Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava, os moradores e agricultores precisam solicitar à Associação itens, serviços e documentos, como sementes, adubo, ferramentas, serviços de máquina (trator e patrol) e declarações (morador, convivência), e a Associação precisa manter registro desses pedidos e de seu andamento, inclusive dos que são encaminhados à Prefeitura. Atualmente, esse processo é realizado principalmente de forma verbal e informal, o que causa ruídos de comunicação, desencontros e perda do histórico dos pedidos.
 
 **Evidências de que o problema existe**:
 
@@ -26,7 +26,7 @@ A ausência de um registro centralizado dificulta a organização e o acompanham
 
 ## 3. Solução proposta
 
-Um sistema web simples para a comunidade, que permita aos moradores e agricultores fazer pedidos à Associação: de **material** (sementes, adubo, ferramentas) ou de **serviço de máquina** (trator e patrol, que são da Prefeitura). A Associação poderá visualizar, organizar e responder os pedidos (aprovar, negar com motivo, encaminhar à Prefeitura ou marcar como atendido), mantendo um histórico do andamento que o morador consegue acompanhar.
+Um sistema web simples para a comunidade, que permita aos moradores e agricultores fazer pedidos à Associação: de **material** (sementes, adubo, ferramentas), de **serviço de máquina** (trator e patrol, que são da Prefeitura) ou de **declaração** (emitida pela Associação e assinada pelo presidente). A Associação poderá visualizar, organizar e responder os pedidos (aprovar, negar com motivo, encaminhar à Prefeitura ou marcar como atendido), mantendo um histórico do andamento que o morador consegue acompanhar.
 
 >
 
@@ -35,7 +35,7 @@ Um sistema web simples para a comunidade, que permita aos moradores e agricultor
 | # | Funcionalidade | Para quem | Por que é essencial |
 |---|---|---|---|
 | 1 | Cadastro/login do morador | Morador | Permite identificar quem está fazendo o pedido |
-| 2 | Pedido de material ou de serviço de máquina | Morador | Permite solicitar formalmente o que precisa à Associação |
+| 2 | Pedido de material, serviço de máquina ou declaração | Morador | Permite solicitar formalmente o que precisa à Associação |
 | 3 | Informar categoria, item, quantidade e, nos serviços, a localização | Morador | Permite à Associação entender exatamente o que foi pedido e onde |
 | 4 | Visualização e organização dos pedidos | Associação | Centraliza os pedidos recebidos dos moradores |
 | 5 | Resposta ao pedido e acompanhamento do status | Associação e Morador | Permite acompanhar o andamento de cada pedido |

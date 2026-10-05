@@ -16,7 +16,7 @@ Este documento define o contrato de comunicação entre o frontend e o backend d
 | Formato de datas | ISO 8601 em UTC para data/hora (`2026-09-29T10:30:00Z`) e `AAAA-MM-DD` para `dataDesejada` |
 | Formato de valores monetários | Não se aplica (o sistema não trabalha com valores monetários) |
 | Paginação: estilo e tamanho padrão | `count`, `next`, `previous` e `results`; parâmetros `?page=` (começa em 1) e `?pageSize=` (padrão 20, máximo 100) |
-| Como se filtra, ordena e busca | Query string: `?q=` (busca em item e descrição), `?ordering=` (ex.: `-dataCriacao`) e filtros: `?status=`, `?categoriaId=`, `?tipo=material\|servico` |
+| Como se filtra, ordena e busca | Query string: `?q=` (busca em item e descrição), `?ordering=` (ex.: `-dataCriacao`) e filtros: `?status=`, `?categoriaId=`, `?tipo=material\|servico\|documento` |
 | Formato do erro de validação e do erro de permissão | JSON. `400` validação (objeto campo → lista de mensagens), `401` não autenticado e `403` sem permissão (objeto com `detail`) |
 | Relações | Aninhadas na leitura (`categoria`, `autor`, `localizacao`); na escrita, informadas por ID (`categoriaId`) |
 
@@ -33,13 +33,13 @@ Este documento define o contrato de comunicação entre o frontend e o backend d
 | --- | --- | --- | --- |
 | `solicitado` | Estado inicial, definido ao criar | todos | `emAnalise`, `negado`, `cancelado` |
 | `emAnalise` | Associação avaliando | todos | `aprovado`\*, `encaminhado`\*\*, `negado`, `cancelado` |
-| `aprovado` | Associação aprovou; falta entregar | material | `atendido`, `negado` |
+| `aprovado` | Associação aprovou; falta entregar o item ou emitir o documento | material, documento | `atendido`, `negado` |
 | `encaminhado` | Associação encaminhou à Prefeitura | serviço | `atendido`, `negado` |
-| `atendido` | Item entregue ou serviço realizado | todos | (final) |
+| `atendido` | Item entregue, serviço realizado ou declaração entregue | todos | (final) |
 | `negado` | Não será atendido; exige `observacao` | todos | (final) |
 | `cancelado` | Cancelado pelo morador | todos | (final) |
 
-\* somente pedidos de categoria `material` · \*\* somente pedidos de categoria `servico`.
+\* somente pedidos de categoria de tipo `material` ou `documento` · \*\* somente de tipo `servico`.
 
 Transição inválida retorna `400`. Toda mudança gera um registro de histórico (ver [dominio.md](dominio.md#historicostatus)).
 
@@ -189,14 +189,24 @@ Campos sem valor são retornados como `null` (por exemplo, `localizacao` em pedi
 }
 ```
 
+### Pedido de declaração
+
+```json
+{
+  "categoriaId": 6,
+  "item": "Declaração de morador",
+  "descricao": "Para apresentar em banco."
+}
+```
+
 Regras de preenchimento:
 
-| Campo | Material | Serviço |
-| --- | :---: | :---: |
-| `categoriaId`, `item` | obrigatório | obrigatório |
-| `quantidade`, `unidade` | obrigatório | opcional |
-| `localizacao` | opcional | obrigatório |
-| `descricao`, `dataDesejada` | opcional | opcional |
+| Campo | Material | Serviço | Documento |
+| --- | :---: | :---: | :---: |
+| `categoriaId`, `item` | obrigatório | obrigatório | obrigatório |
+| `quantidade`, `unidade` | obrigatório | opcional | não se aplica |
+| `localizacao` | opcional | obrigatório | não se aplica |
+| `descricao` (finalidade, no documento), `dataDesejada` | opcional | opcional | opcional |
 
 ## Exemplo de atualização de status
 

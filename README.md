@@ -1,6 +1,6 @@
 # Mutirão
 
-Sistema web para a Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava. Moradores e agricultores fazem pedidos de material (sementes, adubo, ferramentas) e de serviço de máquina (trator e patrol), e a Associação os analisa, aprova ou encaminha à Prefeitura, registrando o andamento de cada um. 
+Sistema web para a Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava. Moradores e agricultores fazem pedidos de material (sementes, adubo, ferramentas) , de serviço de máquina (trator e patrol) e de declarações (morador, convivência), e a Associação os analisa, aprova ou encaminha à Prefeitura, registrando o andamento de cada um. 
 Um projeto desenvolvido na disciplina DPW.
 
 ## Equipe:
