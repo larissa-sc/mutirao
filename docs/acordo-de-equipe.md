@@ -2,25 +2,23 @@
 
 **Projeto:** Mutirão · **Equipe:** Larissa Cavalcante e Marcos Gomes
 
-> Rascunho para confirmação conjunta. Os itens marcados com ⚠️ dependem de a dupla confirmar.
-
 ## Responsabilidades
 
 | Área | Responsável principal | Apoio |
 | --- | --- | --- |
-| Backend (NestJS, banco, validação do login Firebase) | Marcos ⚠️ | Larissa |
-| Frontend (React, telas, login Firebase, usabilidade) | Larissa ⚠️ | Marcos |
-| Documentação (ata, backlog, contrato, domínio) | Larissa e Marcos, dividido por documento | |
+| Backend (NestJS, banco, validação do login Firebase) | Marcos | Larissa |
+| Frontend (React, telas, login Firebase, usabilidade) | Larissa | Marcos |
+| Documentação (ata, backlog, contrato, domínio) | Larissa e Marcos (dividido por documento) | |
 | Contato e reuniões com a Associação | Larissa e Marcos, ambos presentes | |
-| Testes com moradores e Associação | Marcos (condução) ⚠️ | Larissa (anotações) |
-| Registro das atas | Larissa ⚠️ | Marcos |
+| Testes com moradores e Associação | Marcos (condução) | Larissa (anotações) |
+| Registro das atas | Larissa | Marcos |
 | Entrega final e devolutiva | Larissa e Marcos | |
 
 A divisão por história de usuário está em [backlog.md](backlog.md#plano-de-trabalho). Responsável principal é quem entrega; apoio é quem revisa e ajuda a destravar.
 
 ## Rotina de trabalho
 
-- **Reunião de alinhamento:** 1 vez por semana, 30 min (⚠️ definir dia e horário), por chat ou chamada. Pauta fixa: o que foi feito, o que vai ser feito, o que está bloqueando.
+- **Reunião de alinhamento:** 1 vez por semana, 30 min (a definir dia e horário), por chat ou chamada. Pauta fixa: o que foi feito, o que vai ser feito, o que está bloqueando.
 - **Capacidade:** 10 h/semana no total entre os dois. Se alguém não puder cumprir sua parte, avisa na reunião ou antes, para redistribuir.
 - **Comunicação:** chat da dupla para o dia a dia; decisões importantes ficam registradas na ata ou neste repositório.
 
