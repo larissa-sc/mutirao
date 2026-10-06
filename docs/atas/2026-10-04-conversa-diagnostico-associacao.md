@@ -4,7 +4,7 @@
 
 | Campo | Conteúdo |
 | --- | --- |
-| **Data e hora** | 2026-10-04 (domingo, dia da eleição, após a votação) · horário: ⚠️ preencher |
+| **Data e hora** | 2026-10-04 (domingo, dia da eleição, após a votação) · horário: 21h |
 | **Local / formato** | Presencial, na casa do presidente · conversa informal |
 | **Tipo** | Diagnóstico com a organização parceira (conversa informal) |
 | **Redigida por** | Marcos Gomes |
@@ -13,7 +13,7 @@
 
 | Nome | Papel / organização | Presente |
 | --- | --- | :---: |
-| Larissa Cavalcante | Desenvolvedora / IFPE | ⚠️ confirmar (a conversa foi conduzida por Marcos) |
+| Larissa Cavalcante | Desenvolvedora / IFPE | ✅ |
 | Marcos Gomes | Desenvolvedor / IFPE e responsável de T.I. da Associação | ✅ |
 | Marcos Gomes da Silva | Presidente da Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava | ✅ |
 
@@ -35,7 +35,7 @@ Conversa livre, sem pauta formal. Os temas tratados foram o processo atual de pe
 
 **2. Cenário atual.** O presidente confirmou o cenário descrito no canvas (ver "Problemas confirmados").
 
-**3. Declarações.** Segundo Marcos Gomes, a Associação também recebe pedidos de declarações (ex.: de morador e de convivência), que ele emite e o presidente assina. Esse tipo de pedido foi incluído no escopo do Mutirão. ⚠️ Confirmar quais declarações existem.
+**3. Declarações.** Segundo Marcos Gomes, a Associação também recebe pedidos de declarações (ex.: de morador e de convivência), que ele emite e o presidente assina. Esse tipo de pedido foi incluído no escopo do Mutirão.
 
 ### Decisões
 
@@ -60,7 +60,7 @@ Não se aplica (primeira conversa com a Associação).
 
 **Assinaturas**
 
-Não houve assinatura nesta conversa informal. A assinatura da Associação será coletada na ata da reunião formal (obrigatória em reuniões com a organização parceira).
+Não houve assinatura nesta conversa informal. A assinatura da Associação será coletada na ata da reunião formal.
 
 | Nome | Assinatura |
 | --- | --- |
