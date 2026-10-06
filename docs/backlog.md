@@ -2,42 +2,77 @@
 
 | ID | História de usuário | Prioridade |
 | --- | --- | --- |
-| US01 | Como **morador**, quero criar uma conta e fazer login para acessar o Mutirão.                                                                                             | Must       |
-| US02 | Como **morador**, quero registrar uma ocorrência informando título, descrição, categoria e localização, podendo anexar uma foto, para comunicar um problema à Associação. | Must       |
-| US03 | Como **morador**, quero consultar minhas ocorrências e seus status para acompanhar as demandas que registrei.                                                             | Must       |
-| US04 | Como **membro da Associação**, quero visualizar e organizar as ocorrências registradas pelos moradores para acompanhar as demandas da comunidade.                         | Must       |
-| US05 | Como **membro da Associação**, quero atualizar o status de uma ocorrência para registrar seu andamento.                                                                   | Must       |
+| US01 | Como **morador/agricultor**, quero criar uma conta com e-mail e senha ou entrar com Google para acessar o Mutirão. | Must |
+| US02 | Como **morador/agricultor**, quero fazer um pedido de material (sementes, adubo, ferramentas), de serviço de máquina (trator, patrol) ou de declaração (morador, convivência), informando o que preciso, para solicitá-lo à Associação. | Must |
+| US03 | Como **morador/agricultor**, quero consultar meus pedidos e seus status, e cancelar um pedido que não preciso mais, para acompanhar o que solicitei. | Must |
+| US04 | Como **membro da Associação**, quero visualizar e organizar os pedidos dos moradores para saber o que está pendente. | Must |
+| US05 | Como **membro da Associação**, quero aprovar, negar (com motivo), encaminhar à Prefeitura ou marcar como atendido um pedido, para registrar seu andamento. | Must |
 
+## Plano de trabalho
+
+Capacidade da equipe: **10 h/semana no total** (2 pessoas). Cada história se divide em duas partes que podem andar em paralelo, usando o [contrato da API](contrato-api.md) como combinado:
+
+- **API (backend):** Marcos, com revisão da Larissa.
+- **Tela (frontend):** Larissa, com revisão do Marcos. Enquanto a API não está pronta, usa dados de exemplo do contrato.
+
+Estimativas em horas, incluindo testes de cada parte. Os responsáveis são uma proposta a confirmar com a Larissa (ver [acordo de equipe](acordo-de-equipe.md) e [decisões técnicas](decisoes-tecnicas.md)).
+
+| Ordem | ID | API (Marcos) | Tela (Larissa) | Total | Depende de | Semana prevista |
+| :---: | --- | :---: | :---: | :---: | --- | :---: |
+| 1 | US01 | 4 h | 4 h | 8 h | — | 15 |
+| 2 | US02 | 6 h | 6 h | 12 h | US01 | 15–16 |
+| 3 | US03 | 3 h | 3 h | 6 h | US01, US02 | 16 |
+| 4 | US04 | 3 h | 5 h | 8 h | US01, US02 | 16–17 |
+| 5 | US05 | 3 h | 3 h | 6 h | US04 | 17 |
+| | **Total** | **19 h** | **21 h** | **40 h** | | |
+
+Sobram cerca de 10 h para testes com usuários, ajustes e documentação. O cronograma completo está em [cronograma.md](cronograma.md).
+
+**Ordem de execução:** US01 vem primeiro porque todas as demais exigem usuário autenticado; US02 antes de US03/US04 porque sem pedidos não há o que consultar; US05 por último porque depende da tela da Associação (US04).
 
 ## Critérios de aceite
 
-### US01 — Cadastro e login
+Cada critério é verificável com um teste (automatizado ou manual). A história só é considerada pronta quando todos os critérios passam e a [Definition of Done](acordo-de-equipe.md#definition-of-done) é cumprida. Regras detalhadas em [dominio.md](dominio.md) e [contrato-api.md](contrato-api.md).
 
-O usuário consegue criar uma conta com os dados obrigatórios.
-O usuário consegue realizar login com credenciais válidas.
-O sistema impede cadastro com e-mail já utilizado.
+### US01 — Login e criação de conta
 
-### US02 — Registrar ocorrência
+- O usuário consegue criar uma conta com e-mail e senha ou entrar com Google, usando o Firebase Auth.
+- Após entrar, o frontend chama `POST /api/auth/cadastro` e o backend cria o usuário com papel `morador` (ou devolve o já existente, sem duplicar).
+- `GET /api/auth/eu` retorna os dados do usuário logado.
+- Requisição sem token, ou com token inválido ou expirado, retorna `401`.
+- O sistema não recebe nem guarda senhas; elas ficam no Firebase.
+- O usuário consegue sair (logout) e perde o acesso às telas protegidas.
 
-O morador autenticado consegue registrar uma ocorrência.
-Título, descrição, categoria e localização são obrigatórios.
-A foto é opcional.
-A ocorrência fica associada ao morador que a criou.
+### US02 — Fazer pedido
 
-### US03 — Consultar ocorrências
+- O morador autenticado consegue criar um pedido e recebe `201`, com status `solicitado`.
+- Em pedido de **material**, categoria, item, quantidade e unidade são obrigatórios; a falta de qualquer um retorna `400` indicando o campo.
+- Em pedido de **serviço de máquina**, categoria, item e localização são obrigatórios; quantidade é opcional.
+- Em pedido de **declaração**, categoria e item (tipo da declaração) são obrigatórios; a finalidade vai na descrição.
+- Descrição e data desejada são opcionais.
+- O pedido fica associado ao morador que o criou.
+- Usuário não autenticado recebe `401` ao tentar criar.
 
-O morador consegue visualizar suas próprias ocorrências.
-Cada ocorrência apresenta seu status.
-O morador não consegue acessar ocorrências de outros moradores.
+### US03 — Consultar e cancelar pedidos
 
-### US04 — Visualizar e organizar ocorrências
+- O morador consegue visualizar a lista dos seus próprios pedidos, paginada.
+- Cada pedido apresenta seu status atual.
+- O morador consegue ver o histórico de status e, se o pedido foi negado, o motivo.
+- O morador não consegue acessar pedidos de outros moradores (`403` na consulta por ID; ausentes na listagem).
+- O morador consegue cancelar o próprio pedido enquanto estiver `solicitado` ou `emAnalise`; depois disso, o cancelamento retorna `400`.
 
-A Associação consegue visualizar as ocorrências registradas.
-É possível consultar as informações da ocorrência.
-A Associação consegue organizar as ocorrências por categoria/status.
+### US04 — Visualizar e organizar pedidos
 
-### US05 — Atualizar status
+- A Associação consegue visualizar os pedidos de todos os moradores.
+- É possível consultar todas as informações do pedido (categoria, item, quantidade, local, autor, data desejada, status).
+- A Associação consegue filtrar por tipo (material/serviço/declaração), categoria e status e ordenar por data.
+- Morador não tem acesso à listagem geral.
 
-A Associação consegue alterar o status de uma ocorrência.
-O novo status fica disponível para consulta pelo morador.
-Apenas usuários autorizados podem alterar o status.
+### US05 — Responder pedido e atualizar status
+
+- A Associação consegue colocar o pedido em análise, aprová-lo (material ou declaração), encaminhá-lo à Prefeitura (serviço), negá-lo ou marcá-lo como atendido, seguindo as transições permitidas.
+- Negar exige uma observação com o motivo.
+- Transição inválida retorna `400` (por exemplo, `aprovado` em pedido de serviço, ou `encaminhado` em material).
+- O novo status e, se houver, a observação ficam disponíveis para consulta pelo morador.
+- Cada mudança gera um registro no histórico com responsável e data.
+- Apenas usuários da Associação podem alterar o status (o morador só cancela o próprio pedido; outras tentativas retornam `403`).
