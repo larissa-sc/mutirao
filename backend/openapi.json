@@ -1,0 +1,158 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/categorias": {
+      "get": {
+        "operationId": "CategoriaController_listar",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "example": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListaCategoriasResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de paginação inválidos."
+          }
+        },
+        "summary": "Lista as categorias disponíveis",
+        "tags": [
+          "Categorias"
+        ]
+      }
+    },
+    "/api/categorias/{id}": {
+      "get": {
+        "operationId": "CategoriaController_buscarPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "O identificador deve ser numérico."
+          },
+          "404": {
+            "description": "Categoria não encontrada."
+          }
+        },
+        "summary": "Consulta uma categoria pelo identificador",
+        "tags": [
+          "Categorias"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Mutirão API",
+    "description": "Contrato HTTP dos endpoints implementados do Mutirão.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CategoriaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "Sementes"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "material",
+              "servico",
+              "documento"
+            ],
+            "example": "material"
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "tipo"
+        ]
+      },
+      "ListaCategoriasResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "example": 7
+          },
+          "next": {
+            "type": "object",
+            "nullable": true,
+            "example": null
+          },
+          "previous": {
+            "type": "object",
+            "nullable": true,
+            "example": null
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoriaResponse"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ]
+      }
+    }
+  }
+}
