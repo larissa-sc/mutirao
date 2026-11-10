@@ -1,6 +1,6 @@
 # Entidades do backend
 
-Base do modelo de dados do Mutirão, com TypeORM. As regras de negócio de cada entidade estão em `docs/dominio.md` (na branch de documentação) e o contrato das rotas em `docs/contrato-api.md`.
+Modelo de dados do Mutirão, com TypeORM e PostgreSQL. As regras de cada entidade, o `onDelete` justificado por regra de negócio e as restrições estão em [`docs/dominio.md`](../docs/dominio.md); o contrato das rotas está em [`docs/contrato-api.md`](../docs/contrato-api.md).
 
 ## Relacionamentos
 
@@ -9,6 +9,8 @@ erDiagram
     USUARIO ||--o{ PEDIDO : "faz (autor)"
     CATEGORIA ||--o{ PEDIDO : classifica
     PEDIDO |o--o| LOCALIZACAO : "situa (1:0..1)"
+    PEDIDO ||--o{ PEDIDO_ITEM : "tem linhas"
+    ITEM ||--o{ PEDIDO_ITEM : "aparece em"
     PEDIDO ||--o{ HISTORICO_STATUS : possui
     USUARIO ||--o{ HISTORICO_STATUS : "altera (responsável)"
 
@@ -25,17 +27,20 @@ erDiagram
         string nome UK
         enum tipo "material | servico | documento"
     }
+    ITEM {
+        int id PK
+        string nome UK
+        string unidadePadrao
+    }
     LOCALIZACAO {
         int id PK
-        double latitude
-        double longitude
+        double latitude "CHECK -90..90"
+        double longitude "CHECK -180..180"
     }
     PEDIDO {
         int id PK
         int categoriaId FK
-        string item
-        decimal quantidade "opcional"
-        string unidade "opcional"
+        string titulo
         text descricao "opcional"
         date dataDesejada "opcional"
         int localizacaoId FK "opcional"
@@ -43,6 +48,13 @@ erDiagram
         enum status "solicitado..cancelado"
         date dataCriacao
         date dataAtualizacao
+    }
+    PEDIDO_ITEM {
+        int id PK
+        int pedidoId FK
+        int itemId FK
+        decimal quantidade "CHECK > 0"
+        string unidade
     }
     HISTORICO_STATUS {
         int id PK
@@ -55,48 +67,50 @@ erDiagram
     }
 ```
 
+**Pedido N-N Item** é resolvida em `PedidoItem`, porque a relação tem atributos (quantidade e unidade).
+
 | Entidade | Arquivo | Tabela |
 | --- | --- | --- |
 | Usuario | `src/usuarios/usuario.entity.ts` | `usuarios` |
 | Categoria | `src/categorias/categoria.entity.ts` | `categorias` |
+| Item | `src/itens/item.entity.ts` | `itens` |
 | Localizacao | `src/pedidos/localizacao.entity.ts` | `localizacoes` |
 | Pedido | `src/pedidos/pedido.entity.ts` | `pedidos` |
+| PedidoItem | `src/pedidos/pedido-item.entity.ts` | `pedido_itens` |
 | HistoricoStatus | `src/pedidos/historico-status.entity.ts` | `historico_status` |
 
-## Comportamento ao apagar
+## Banco de dados e migrações
 
-| Relação | Ao apagar o lado "um" |
-| --- | --- |
-| Categoria → Pedido | Bloqueia (`RESTRICT`): categoria com pedidos não pode ser apagada |
-| Usuario → Pedido | Bloqueia (`RESTRICT`) |
-| Usuario → HistoricoStatus | Bloqueia (`RESTRICT`) |
-| Pedido → HistoricoStatus | Apaga junto (`CASCADE`) |
-
-Na prática pedidos não são apagados; o cancelamento é uma mudança de status.
-
-## Banco de dados
-
-O banco ainda não foi definido (candidato: Supabase/Postgres). Por isso a conexão é opcional:
-
-- Sem `DATABASE_URL`, a API sobe normalmente, sem banco.
-- Com `DATABASE_URL`, o `DatabaseModule` conecta ao Postgres e registra as entidades.
-
-Copie `.env.example` para `.env` e preencha. Em desenvolvimento, `DB_SYNC=true` cria as tabelas a partir das entidades. Em produção use migrations.
+O banco é **PostgreSQL**, criado **somente por migrações** (`synchronize` desligado). Em desenvolvimento ele roda em Docker (porta 5433 do computador, para não colidir com um PostgreSQL já instalado).
 
 ```bash
-node --env-file=.env dist/main.js
+docker compose up -d                  # na raiz do repositório
+cp backend/.env.example backend/.env  # DATABASE_URL já aponta para o Docker
+npm install                           # na raiz
+npm run migration:run -w backend      # cria as tabelas num banco vazio
+npm run seed -w backend               # dados de exemplo
+npm run start:dev -w backend          # http://localhost:3000/api/docs
 ```
+
+| Script | O que faz |
+| --- | --- |
+| `migration:generate -- src/migracoes/Nome` | Gera uma migração a partir da diferença entre as entidades e o banco |
+| `migration:run` | Aplica as migrações pendentes |
+| `migration:revert` | Desfaz a última migração |
+| `seed` | Popula usuários, categorias, itens e pedidos de exemplo (pode rodar mais de uma vez) |
+
+As migrações ficam em `src/migracoes/`.
 
 ## Testes
 
-`src/database/entidades.spec.ts` monta o modelo sem conectar a nenhum banco e confere tabelas, relações, obrigatoriedade dos campos, enums e a exclusão em cascata do histórico.
-
 ```bash
-npm run test -w backend
+npm run test -w backend        # unitários: entidades, regras de status, validação (sem banco)
+npm run test:e2e -w backend    # ponta a ponta contra o PostgreSQL (exige docker compose up e migration:run)
 ```
 
 ## Observações para quem continuar
 
-- As entidades usam `Relation<T>` nas propriedades de relação. Isso evita erro de importação circular em ESM, porque `Pedido`, `Usuario` e `HistoricoStatus` se referenciam.
-- Os enums usam `simple-enum`, que funciona em qualquer banco e guarda o valor como texto.
-- As regras de negócio (campos obrigatórios por tipo de pedido, transições de status e permissões) ficam nos serviços, não nas entidades.
+- As propriedades de relação usam `Relation<T>`. Isso evita erro de importação circular em ESM, porque `Pedido`, `Usuario` e `PedidoItem` se referenciam.
+- Os enums usam `simple-enum`, que guarda o valor como texto.
+- As regras de negócio (campos por tipo de pedido, transições de status e permissões) ficam nos *services* e em `status-pedido.regras.ts`, não nos controllers nem nas entidades.
+- O Windows pode bloquear os atalhos do `npm run` e do `oxlint --type-aware` em algumas máquinas (`Acesso negado`). Chamar o programa direto com `node ../node_modules/<pacote>/...` contorna o problema.
