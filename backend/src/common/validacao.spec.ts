@@ -107,6 +107,11 @@ describe('Mensagens de validação em português', () => {
     expect(erros['itens.0.quantidade']).toEqual(['Deve ser maior que zero.']);
   });
 
+  it('texto vazio diz que não pode ficar vazio', async () => {
+    const erros = await erroDe(CriarPedidoDto, { ...pedidoValido, titulo: '' });
+    expect(erros.titulo).toEqual(['Não pode ficar vazio.']);
+  });
+
   it('traduz a faixa da localização e o campo não permitido', async () => {
     const erros = await erroDe(CriarPedidoDto, {
       ...pedidoValido,

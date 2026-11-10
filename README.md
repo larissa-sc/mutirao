@@ -45,6 +45,7 @@ Detalhes do modelo de dados e das migrações em [`backend/ENTIDADES.md`](backen
 | [Backlog e plano de trabalho](docs/backlog.md) | Histórias, estimativas, responsáveis e critérios de aceite |
 | [Domínio](docs/dominio.md) | Entidades, relações e regras |
 | [Contrato da API](docs/contrato-api.md) | Rotas, permissões, status e formatos |
+| [Guia de teste (curls)](docs/curls.md) | Como subir, rodar os testes e testar a API na mão, com o roteiro da Etapa 2 |
 | [Acordo de equipe](docs/acordo-de-equipe.md) | Responsabilidades, revisão e Definition of Done |
 | [Cronograma](docs/cronograma.md) | Entregas, prazos e plano B |
 | [Metas](docs/metas.md) | Como as metas serão medidas |

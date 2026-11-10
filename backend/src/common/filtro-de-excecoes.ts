@@ -27,7 +27,9 @@ const MENSAGENS: Record<string, (original: string) => string> = {
     return max
       ? `Use entre ${min} e ${max} caracteres.`
       : o.includes('longer')
-        ? `Use no mínimo ${min} caracteres.`
+        ? Number(min) === 1
+          ? 'Não pode ficar vazio.'
+          : `Use no mínimo ${min} caracteres.`
         : `Use no máximo ${min} caracteres.`;
   },
   isEnum: (o) => `Valor inválido. Valores aceitos: ${o.split(': ')[1]}.`,
