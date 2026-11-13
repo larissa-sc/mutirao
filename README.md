@@ -10,12 +10,30 @@ Marcos Gomes
 
 ## Como rodar
 
-### Linux / macOS
+Requisitos: Node 24 (npm 11) e Docker.
 
 ```bash
-npm install          # instala backend, frontend e pacotes de uma vez
-npm run dev:api          # http://localhost:3000
-npm run dev:web          # http://localhost:5173
+docker compose up -d                  # PostgreSQL 16 (porta 5433)
+cp backend/.env.example backend/.env  # DATABASE_URL já aponta para o Docker
+npm install                           # na raiz do repositório
+npm run migration:run -w backend      # cria as tabelas num banco vazio
+npm run seed -w backend               # dados de exemplo
+npm run dev:api                       # http://localhost:3000
+```
+
+Com a API no ar:
+
+- **Swagger:** http://localhost:3000/api/docs (schema em `/api/openapi.json`)
+- **Saúde:** http://localhost:3000/api/health
+
+Testes (os e2e exigem o banco no ar e migrado):
+
+```bash
+npm run test -w backend
+npm run test:e2e -w backend
+```
+
+Detalhes do modelo de dados e das migrações em [`backend/ENTIDADES.md`](backend/ENTIDADES.md).
 
 ## Documentação
 
@@ -27,6 +45,7 @@ npm run dev:web          # http://localhost:5173
 | [Backlog e plano de trabalho](docs/backlog.md) | Histórias, estimativas, responsáveis e critérios de aceite |
 | [Domínio](docs/dominio.md) | Entidades, relações e regras |
 | [Contrato da API](docs/contrato-api.md) | Rotas, permissões, status e formatos |
+| [Guia de teste (curls)](docs/curls.md) | Como subir, rodar os testes e testar a API na mão, com o roteiro da Etapa 2 |
 | [Acordo de equipe](docs/acordo-de-equipe.md) | Responsabilidades, revisão e Definition of Done |
 | [Cronograma](docs/cronograma.md) | Entregas, prazos e plano B |
 | [Metas](docs/metas.md) | Como as metas serão medidas |

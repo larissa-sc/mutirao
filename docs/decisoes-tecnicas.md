@@ -4,10 +4,10 @@ Decididas por Marcos Gomes (T.I. da Associação). ⚠️ Confirmar com a Lariss
 
 | Tema | Decisão | Observação |
 | --- | --- | --- |
-| Frontend | React com TypeScript | Responsável: Larissa |
-| Backend | NestJS com TypeScript | Responsável: Marcos. Valida o token do Firebase e aplica as regras de negócio e de permissão |
-| Login | **Firebase Auth**, com e-mail e senha e com Google | O sistema não guarda senhas. O frontend envia o ID token em `Authorization: Bearer` |
-| Banco de dados | **A definir** (candidato: Supabase/PostgreSQL) | ⚠️ O canvas cita PostgreSQL; confirmar com o professor se outro banco é aceito |
+| Frontend | React com TypeScript | ⚠️ O professor deixa o frontend **fora do escopo** das etapas; fica como extra, depois da API |
+| Backend | NestJS 12 com TypeScript (ESM), TypeORM | Valida o token do Firebase e aplica as regras de negócio e de permissão |
+| Login | **Firebase Auth**, com e-mail e senha e com Google | ⚠️ O professor ensina sessão com cookie e senha em Argon2 (ADR-07). Antes da Etapa 3, decidir: manter o Firebase com um ADR justificando, ou migrar. O login só entra na Etapa 3 |
+| Banco de dados | **PostgreSQL 16**, criado só por migrações | Em desenvolvimento roda em Docker (`docker-compose.yml`). Em produção, PostgreSQL gerenciado (ex.: Supabase) |
 | Hospedagem | PaaS gratuita | R$ 0 durante o desenvolvimento |
 
 ## Papéis

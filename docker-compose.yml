@@ -1,0 +1,23 @@
+# Banco de desenvolvimento: PostgreSQL 16.
+#   docker compose up -d
+# A porta do computador é 5433 para não colidir com um PostgreSQL já instalado (5432).
+services:
+  db:
+    image: postgres:16
+    container_name: mutirao-db
+    environment:
+      POSTGRES_USER: mutirao
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: mutirao
+    ports:
+      - "5433:5432"
+    volumes:
+      - mutirao-dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mutirao -d mutirao"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  mutirao-dados:

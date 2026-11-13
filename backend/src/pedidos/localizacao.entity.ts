@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   OneToOne,
@@ -8,6 +9,8 @@ import {
 import { Pedido } from './pedido.entity.js';
 
 @Entity('localizacoes')
+@Check('"latitude" BETWEEN -90 AND 90')
+@Check('"longitude" BETWEEN -180 AND 180')
 export class Localizacao {
   @PrimaryGeneratedColumn()
   id: number;
