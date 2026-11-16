@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createObserveModule } from '@nestjs/observe';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriasModule } from './categorias/categorias.module.js';
+import { contador } from './common/contador-de-consultas.js';
+import { DiagnosticoModule } from './diagnostico/diagnostico.module.js';
 import { ENTIDADES } from './database/entidades.js';
 import { HealthController } from './health/health.controller.js';
 import { ItensModule } from './itens/itens.module.js';
@@ -33,12 +35,18 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         entities: ENTIDADES,
         // O banco só muda por migração (npm run migration:run).
         synchronize: false,
+        // Conta cada SQL (DB_LOGGING=true também imprime no terminal).
+        logging: ['query' as const],
+        logger: contador,
         migrations: ['dist/migracoes/*.js'],
       }),
     }),
     CategoriasModule,
     ItensModule,
     PedidosModule,
+    // Só para o caderno de consultas (E2). Fica depois do ConfigModule, que
+    // é quem carrega o .env, para o process.env já estar preenchido aqui.
+    ...(process.env.DIAGNOSTICO === 'true' ? [DiagnosticoModule] : []),
   ],
   controllers: [HealthController],
 })
