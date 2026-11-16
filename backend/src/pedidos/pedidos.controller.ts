@@ -42,6 +42,9 @@ export class PedidosController {
   @Get()
   @ApiOperation({ summary: 'Lista os pedidos (paginada, com filtros)' })
   @ApiOkResponse({ type: PaginaPedidos })
+  @ApiBadRequestResponse({
+    description: 'Parâmetros de paginação ou busca inválidos',
+  })
   listar(@Query() filtros: ListarPedidosDto) {
     return this.pedidos.listar(filtros);
   }
@@ -49,6 +52,7 @@ export class PedidosController {
   @Get(':id')
   @ApiOkResponse({ type: PedidoResposta })
   @ApiNotFoundResponse({ description: 'Pedido não encontrado' })
+  @ApiBadRequestResponse({ description: 'O id não é um número inteiro' })
   buscarUm(@Param('id', ParseIntPipe) id: number) {
     return this.pedidos.buscarUm(id);
   }
@@ -71,6 +75,7 @@ export class PedidosController {
   @ApiOkResponse({ type: PedidoResposta })
   @ApiNotFoundResponse({ description: 'Pedido não encontrado' })
   @ApiConflictResponse({ description: 'O pedido já saiu de "solicitado"' })
+  @ApiBadRequestResponse({ description: 'Entrada ou id inválido' })
   atualizar(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: AtualizarPedidoDto,
@@ -84,6 +89,7 @@ export class PedidosController {
   @ApiNoContentResponse({ description: 'Pedido removido' })
   @ApiNotFoundResponse({ description: 'Pedido não encontrado' })
   @ApiConflictResponse({ description: 'O pedido já saiu de "solicitado"' })
+  @ApiBadRequestResponse({ description: 'O id não é um número inteiro' })
   remover(@Param('id', ParseIntPipe) id: number) {
     return this.pedidos.remover(id);
   }
@@ -106,6 +112,7 @@ export class PedidosController {
   @Get(':id/historico')
   @ApiOkResponse({ type: [HistoricoResposta] })
   @ApiNotFoundResponse({ description: 'Pedido não encontrado' })
+  @ApiBadRequestResponse({ description: 'O id não é um número inteiro' })
   historico(@Param('id', ParseIntPipe) id: number) {
     return this.pedidos.historico(id);
   }

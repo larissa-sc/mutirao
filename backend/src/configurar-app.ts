@@ -1,5 +1,9 @@
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  type OpenAPIObject,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import {
   erroDeValidacao,
   FiltroDeExcecoes,
@@ -20,19 +24,29 @@ export function configurarApp(app: INestApplication): void {
   );
 }
 
-// Swagger em /api/docs e o schema em /api/openapi.json.
-export function configurarDocumentacao(app: INestApplication): void {
-  const documento = SwaggerModule.createDocument(
+// O contrato (OpenAPI) gerado a partir do código. É o mesmo documento que o
+// Swagger mostra em /api/docs e que o `npm run gerar:schema` grava em
+// backend/openapi.json.
+export function criarDocumento(app: INestApplication): OpenAPIObject {
+  return SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
       .setTitle('Mutirão')
       .setDescription(
-        'Pedidos de material, serviço de máquina e declaração à Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava.',
+        [
+          'Pedidos de material, serviço de máquina e declaração à Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava.',
+          '',
+          'Formato dos erros: `400` (validação) devolve `{ "campo": ["mensagem"] }`; os demais (`403`, `404`, `409`, `503`) devolvem `{ "detail": "mensagem" }`.',
+        ].join('\n'),
       )
       .setVersion('0.1.0')
       .build(),
   );
-  SwaggerModule.setup('api/docs', app, documento, {
+}
+
+// Swagger em /api/docs e o schema em /api/openapi.json.
+export function configurarDocumentacao(app: INestApplication): void {
+  SwaggerModule.setup('api/docs', app, criarDocumento(app), {
     jsonDocumentUrl: 'api/openapi.json',
   });
 }

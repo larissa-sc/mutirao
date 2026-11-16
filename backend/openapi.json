@@ -1,0 +1,1375 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_verificar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API e banco funcionando"
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/categorias": {
+      "get": {
+        "operationId": "CategoriasController_listar",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "tipo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "material",
+                "servico",
+                "documento"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Busca no nome",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaCategorias"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de paginação ou busca inválidos"
+          }
+        },
+        "summary": "Lista as categorias (paginada)",
+        "tags": [
+          "categorias"
+        ]
+      },
+      "post": {
+        "operationId": "CategoriasController_criar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriaResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "409": {
+            "description": "Já existe uma categoria com esse nome"
+          }
+        },
+        "tags": [
+          "categorias"
+        ]
+      }
+    },
+    "/api/categorias/{id}": {
+      "get": {
+        "operationId": "CategoriasController_buscarUm",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriaResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Categoria não encontrada"
+          }
+        },
+        "tags": [
+          "categorias"
+        ]
+      },
+      "patch": {
+        "operationId": "CategoriasController_atualizar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriaResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada ou id inválido"
+          },
+          "404": {
+            "description": "Categoria não encontrada"
+          },
+          "409": {
+            "description": "Nome repetido ou tipo em uso"
+          }
+        },
+        "tags": [
+          "categorias"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriasController_remover",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Categoria removida"
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Categoria não encontrada"
+          },
+          "409": {
+            "description": "A categoria já tem pedidos"
+          }
+        },
+        "tags": [
+          "categorias"
+        ]
+      }
+    },
+    "/api/itens": {
+      "get": {
+        "operationId": "ItensController_listar",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Busca no nome",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaItens"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de paginação ou busca inválidos"
+          }
+        },
+        "summary": "Lista os itens do catálogo (paginada)",
+        "tags": [
+          "itens"
+        ]
+      },
+      "post": {
+        "operationId": "ItensController_criar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "409": {
+            "description": "Já existe um item com esse nome"
+          }
+        },
+        "tags": [
+          "itens"
+        ]
+      }
+    },
+    "/api/itens/{id}": {
+      "get": {
+        "operationId": "ItensController_buscarUm",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Item não encontrado"
+          }
+        },
+        "tags": [
+          "itens"
+        ]
+      },
+      "patch": {
+        "operationId": "ItensController_atualizar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "404": {
+            "description": "Item não encontrado"
+          },
+          "409": {
+            "description": "Já existe um item com esse nome"
+          }
+        },
+        "tags": [
+          "itens"
+        ]
+      },
+      "delete": {
+        "operationId": "ItensController_remover",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Item removido"
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Item não encontrado"
+          },
+          "409": {
+            "description": "O item já foi pedido"
+          }
+        },
+        "tags": [
+          "itens"
+        ]
+      }
+    },
+    "/api/pedidos": {
+      "get": {
+        "operationId": "PedidosController_listar",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "solicitado",
+                "emAnalise",
+                "aprovado",
+                "encaminhado",
+                "atendido",
+                "negado",
+                "cancelado"
+              ]
+            }
+          },
+          {
+            "name": "categoriaId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "tipo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "material",
+                "servico",
+                "documento"
+              ]
+            }
+          },
+          {
+            "name": "autorId",
+            "required": false,
+            "in": "query",
+            "description": "Temporário: filtra pelo autor (o morador vê só os seus)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Busca no título e na descrição",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "-dataCriacao",
+              "type": "string",
+              "enum": [
+                "dataCriacao",
+                "-dataCriacao"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaPedidos"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de paginação ou busca inválidos"
+          }
+        },
+        "summary": "Lista os pedidos (paginada, com filtros)",
+        "tags": [
+          "pedidos"
+        ]
+      },
+      "post": {
+        "operationId": "PedidosController_criar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarPedidoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos inválidos ou incompatíveis com o tipo da categoria"
+          }
+        },
+        "summary": "Cria um pedido de material, serviço de máquina ou declaração",
+        "tags": [
+          "pedidos"
+        ]
+      }
+    },
+    "/api/pedidos/{id}": {
+      "get": {
+        "operationId": "PedidosController_buscarUm",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Pedido não encontrado"
+          }
+        },
+        "tags": [
+          "pedidos"
+        ]
+      },
+      "patch": {
+        "operationId": "PedidosController_atualizar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarPedidoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada ou id inválido"
+          },
+          "404": {
+            "description": "Pedido não encontrado"
+          },
+          "409": {
+            "description": "O pedido já saiu de \"solicitado\""
+          }
+        },
+        "summary": "Altera o pedido (somente enquanto \"solicitado\")",
+        "tags": [
+          "pedidos"
+        ]
+      },
+      "delete": {
+        "operationId": "PedidosController_remover",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pedido removido"
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Pedido não encontrado"
+          },
+          "409": {
+            "description": "O pedido já saiu de \"solicitado\""
+          }
+        },
+        "summary": "Apaga o pedido (somente enquanto \"solicitado\")",
+        "tags": [
+          "pedidos"
+        ]
+      }
+    },
+    "/api/pedidos/{id}/status": {
+      "patch": {
+        "operationId": "PedidosController_alterarStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlterarStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoResposta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Transição inválida ou motivo ausente"
+          },
+          "403": {
+            "description": "Sem permissão para esta mudança"
+          },
+          "404": {
+            "description": "Pedido não encontrado"
+          }
+        },
+        "summary": "Altera o status, respeitando as transições",
+        "tags": [
+          "pedidos"
+        ]
+      }
+    },
+    "/api/pedidos/{id}/historico": {
+      "get": {
+        "operationId": "PedidosController_historico",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricoResposta"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "O id não é um número inteiro"
+          },
+          "404": {
+            "description": "Pedido não encontrado"
+          }
+        },
+        "tags": [
+          "pedidos"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Mutirão",
+    "description": "Pedidos de material, serviço de máquina e declaração à Associação dos Moradores e Agricultores Familiares da Vila Nova de Cana Brava.\n\nFormato dos erros: `400` (validação) devolve `{ \"campo\": [\"mensagem\"] }`; os demais (`403`, `404`, `409`, `503`) devolvem `{ \"detail\": \"mensagem\" }`.",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CategoriaResposta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "material",
+              "servico",
+              "documento"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "tipo"
+        ]
+      },
+      "PaginaCategorias": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalPages": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoriaResposta"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "pageSize",
+          "totalPages",
+          "results"
+        ]
+      },
+      "CriarCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Sementes"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "material",
+              "servico",
+              "documento"
+            ],
+            "description": "material: itens do catálogo · servico: máquina (exige localização) · documento: declaração"
+          }
+        },
+        "required": [
+          "nome",
+          "tipo"
+        ]
+      },
+      "AtualizarCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Sementes"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "material",
+              "servico",
+              "documento"
+            ],
+            "description": "material: itens do catálogo · servico: máquina (exige localização) · documento: declaração"
+          }
+        }
+      },
+      "ItemResposta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "unidadePadrao": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "unidadePadrao"
+        ]
+      },
+      "PaginaItens": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalPages": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemResposta"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "pageSize",
+          "totalPages",
+          "results"
+        ]
+      },
+      "CriarItemDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Semente de milho"
+          },
+          "unidadePadrao": {
+            "type": "string",
+            "example": "kg",
+            "description": "Unidade sugerida no pedido"
+          }
+        },
+        "required": [
+          "nome",
+          "unidadePadrao"
+        ]
+      },
+      "AtualizarItemDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Semente de milho"
+          },
+          "unidadePadrao": {
+            "type": "string",
+            "example": "kg",
+            "description": "Unidade sugerida no pedido"
+          }
+        }
+      },
+      "CategoriaResumo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "material",
+              "servico",
+              "documento"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "tipo"
+        ]
+      },
+      "LocalizacaoResposta": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ]
+      },
+      "ItemResumo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nome"
+        ]
+      },
+      "ItemPedidoResposta": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ItemResumo"
+          },
+          "quantidade": {
+            "type": "number"
+          },
+          "unidade": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "quantidade",
+          "unidade"
+        ]
+      },
+      "UsuarioResumo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "nome": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nome"
+        ]
+      },
+      "PedidoResposta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "categoria": {
+            "$ref": "#/components/schemas/CategoriaResumo"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataDesejada": {
+            "type": "string",
+            "nullable": true
+          },
+          "localizacao": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LocalizacaoResposta"
+              }
+            ]
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemPedidoResposta"
+            }
+          },
+          "autor": {
+            "$ref": "#/components/schemas/UsuarioResumo"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "solicitado",
+              "emAnalise",
+              "aprovado",
+              "encaminhado",
+              "atendido",
+              "negado",
+              "cancelado"
+            ]
+          },
+          "dataCriacao": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dataAtualizacao": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "categoria",
+          "titulo",
+          "descricao",
+          "dataDesejada",
+          "localizacao",
+          "itens",
+          "autor",
+          "status",
+          "dataCriacao",
+          "dataAtualizacao"
+        ]
+      },
+      "PaginaPedidos": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalPages": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PedidoResposta"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "pageSize",
+          "totalPages",
+          "results"
+        ]
+      },
+      "LocalizacaoDto": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "example": -8.123456,
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "example": -34.987654,
+            "minimum": -180,
+            "maximum": 180
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ]
+      },
+      "ItemDoPedidoDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "example": 1,
+            "description": "Id do item no catálogo"
+          },
+          "quantidade": {
+            "type": "number",
+            "example": 20
+          },
+          "unidade": {
+            "type": "string",
+            "example": "kg",
+            "description": "Se omitida, usa a unidade padrão do item"
+          }
+        },
+        "required": [
+          "itemId",
+          "quantidade"
+        ]
+      },
+      "CriarPedidoDto": {
+        "type": "object",
+        "properties": {
+          "autorId": {
+            "type": "number",
+            "description": "Temporário: até a autenticação (Etapa 3) o autor é informado aqui. Depois virá do token."
+          },
+          "categoriaId": {
+            "type": "number",
+            "example": 1
+          },
+          "titulo": {
+            "type": "string",
+            "example": "Sementes para o plantio de março"
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Detalhes. Em pedido de declaração, a finalidade."
+          },
+          "dataDesejada": {
+            "type": "string",
+            "example": "2026-11-15",
+            "description": "AAAA-MM-DD"
+          },
+          "localizacao": {
+            "description": "Obrigatória em serviço de máquina; opcional em material",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LocalizacaoDto"
+              }
+            ]
+          },
+          "itens": {
+            "description": "Obrigatório em pedido de material",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDoPedidoDto"
+            }
+          }
+        },
+        "required": [
+          "autorId",
+          "categoriaId",
+          "titulo"
+        ]
+      },
+      "AtualizarPedidoDto": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "example": "Sementes para o plantio de março"
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Detalhes. Em pedido de declaração, a finalidade."
+          },
+          "dataDesejada": {
+            "type": "string",
+            "example": "2026-11-15",
+            "description": "AAAA-MM-DD"
+          },
+          "localizacao": {
+            "description": "Obrigatória em serviço de máquina; opcional em material",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LocalizacaoDto"
+              }
+            ]
+          },
+          "itens": {
+            "description": "Obrigatório em pedido de material",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDoPedidoDto"
+            }
+          }
+        }
+      },
+      "AlterarStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "solicitado",
+              "emAnalise",
+              "aprovado",
+              "encaminhado",
+              "atendido",
+              "negado",
+              "cancelado"
+            ]
+          },
+          "observacao": {
+            "type": "string",
+            "description": "Obrigatória quando o status é \"negado\""
+          },
+          "responsavelId": {
+            "type": "number",
+            "description": "Temporário: até a autenticação (Etapa 3) quem altera é informado aqui. Depois virá do token."
+          }
+        },
+        "required": [
+          "status",
+          "responsavelId"
+        ]
+      },
+      "HistoricoResposta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "statusAnterior": {
+            "type": "string",
+            "enum": [
+              "solicitado",
+              "emAnalise",
+              "aprovado",
+              "encaminhado",
+              "atendido",
+              "negado",
+              "cancelado"
+            ],
+            "nullable": true
+          },
+          "statusNovo": {
+            "type": "string",
+            "enum": [
+              "solicitado",
+              "emAnalise",
+              "aprovado",
+              "encaminhado",
+              "atendido",
+              "negado",
+              "cancelado"
+            ]
+          },
+          "observacao": {
+            "type": "string",
+            "nullable": true
+          },
+          "responsavel": {
+            "$ref": "#/components/schemas/UsuarioResumo"
+          },
+          "data": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "statusAnterior",
+          "statusNovo",
+          "observacao",
+          "responsavel",
+          "data"
+        ]
+      }
+    }
+  }
+}

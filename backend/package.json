@@ -25,7 +25,8 @@
     "migration:run": "npm run typeorm migration:run",
     "migration:revert": "npm run typeorm migration:revert",
     "migration:create": "node ../node_modules/typeorm/cli-ts-node-esm.js migration:create",
-    "seed": "node --no-warnings --loader ts-node/esm src/semear.ts"
+    "seed": "node --no-warnings --loader ts-node/esm src/semear.ts",
+    "gerar:schema": "node ../node_modules/@nestjs/cli/bin/nest.js build && node dist/gerar-schema.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",

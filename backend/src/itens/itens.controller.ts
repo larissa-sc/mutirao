@@ -11,6 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -38,12 +39,16 @@ export class ItensController {
   @Get()
   @ApiOperation({ summary: 'Lista os itens do catálogo (paginada)' })
   @ApiOkResponse({ type: PaginaItens })
+  @ApiBadRequestResponse({
+    description: 'Parâmetros de paginação ou busca inválidos',
+  })
   listar(@Query() filtros: ListarItensDto) {
     return this.itens.listar(filtros);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ItemResposta })
+  @ApiBadRequestResponse({ description: 'O id não é um número inteiro' })
   @ApiNotFoundResponse({ description: 'Item não encontrado' })
   buscarUm(@Param('id', ParseIntPipe) id: number) {
     return this.itens.buscarUm(id);
@@ -52,6 +57,7 @@ export class ItensController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: ItemResposta })
+  @ApiBadRequestResponse({ description: 'Entrada inválida' })
   @ApiConflictResponse({ description: 'Já existe um item com esse nome' })
   criar(@Body() dto: CriarItemDto) {
     return this.itens.criar(dto);
@@ -59,6 +65,7 @@ export class ItensController {
 
   @Patch(':id')
   @ApiOkResponse({ type: ItemResposta })
+  @ApiBadRequestResponse({ description: 'Entrada inválida' })
   @ApiNotFoundResponse({ description: 'Item não encontrado' })
   @ApiConflictResponse({ description: 'Já existe um item com esse nome' })
   atualizar(
@@ -71,6 +78,7 @@ export class ItensController {
   @Delete(':id')
   @HttpCode(204)
   @ApiNoContentResponse({ description: 'Item removido' })
+  @ApiBadRequestResponse({ description: 'O id não é um número inteiro' })
   @ApiNotFoundResponse({ description: 'Item não encontrado' })
   @ApiConflictResponse({ description: 'O item já foi pedido' })
   remover(@Param('id', ParseIntPipe) id: number) {
